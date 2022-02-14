@@ -1,0 +1,100 @@
+<mxfile host="app.diagrams.net" modified="2022-02-14T20:06:38.887Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36" etag="98P0idfwI8pZMedK78pZ" version="16.5.6" type="github">
+  <diagram name="Page-1" id="c7558073-3199-34d8-9f00-42111426c3f3">
+    <mxGraphModel dx="1038" dy="921" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="5" value="HexGame" style="shape=process;whiteSpace=wrap;align=center;verticalAlign=middle;size=0.0475;fontStyle=1;strokeWidth=3;fillColor=#FFCCCC" parent="1" vertex="1">
+          <mxGeometry x="59.999999999999915" y="10" width="400" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-124" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-96" target="6UgoUZWrDeGJLSdVRVdj-103" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-96" value="AI&#39;s Turn" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="220" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-102" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-104" target="6UgoUZWrDeGJLSdVRVdj-101" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="250" y="340" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-110" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-101" target="6UgoUZWrDeGJLSdVRVdj-105" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-122" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-101" target="6UgoUZWrDeGJLSdVRVdj-106" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-101" value="If scenario results in win" style="rhombus;whiteSpace=wrap;html=1;spacingLeft=0;spacingBottom=0;spacing=14;" parent="1" vertex="1">
+          <mxGeometry x="220" y="410" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-112" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-103" target="6UgoUZWrDeGJLSdVRVdj-104" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-116" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-103" target="6UgoUZWrDeGJLSdVRVdj-117" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="780" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="510" y="220" />
+              <mxPoint x="510" y="690" />
+              <mxPoint x="260" y="690" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-103" value="Queue of Legal Moves (priority on highest score)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="190" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-104" value="From each legal moves calculate at least 1000 win/loose scenarios" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=8;" parent="1" vertex="1">
+          <mxGeometry x="200" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-105" value="Add 1 to move (a certain square)&lt;br&gt;of first move score" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;perimeterSpacing=0;autosize=0;labelPadding=4;spacingLeft=0;spacingRight=0;spacing=12;" parent="1" vertex="1">
+          <mxGeometry x="340" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-108" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-106" target="6UgoUZWrDeGJLSdVRVdj-103" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="610" />
+              <mxPoint x="90" y="610" />
+              <mxPoint x="90" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-106" value="Deduce 1 if game was lossed" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;spacing=8;" parent="1" vertex="1">
+          <mxGeometry x="200" y="525" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-111" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-105" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="420" as="sourcePoint" />
+            <mxPoint x="260" y="610" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="400" y="610" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-119" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-117" target="6UgoUZWrDeGJLSdVRVdj-118" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-117" value="sort priority queue by move score" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="750" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-121" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="6UgoUZWrDeGJLSdVRVdj-118" target="6UgoUZWrDeGJLSdVRVdj-120" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-118" value="pick highest score move from priority queue" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="850" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-120" value="Next Players Move" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="220" y="970" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-125" value="EvaluateNextMove" style="swimlane;horizontal=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="180" width="580" height="760" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-126" value="True" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="6UgoUZWrDeGJLSdVRVdj-125" vertex="1">
+          <mxGeometry x="270" y="250" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6UgoUZWrDeGJLSdVRVdj-127" value="False" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="6UgoUZWrDeGJLSdVRVdj-125" vertex="1">
+          <mxGeometry x="230" y="310" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
