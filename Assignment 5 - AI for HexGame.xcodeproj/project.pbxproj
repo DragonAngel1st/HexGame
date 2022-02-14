@@ -26,7 +26,7 @@
 /* Begin PBXFileReference section */
 		393F75E327BADDCF00F49866 /* Assignment 5 - AI for HexGame */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Assignment 5 - AI for HexGame"; sourceTree = BUILT_PRODUCTS_DIR; };
 		393F75E627BADDCF00F49866 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		393F75ED27BADDE400F49866 /* HexGameByPatrickMiron.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HexGameByPatrickMiron.txt; sourceTree = "<group>"; };
+		393F75ED27BADDE400F49866 /* HexGameByPatrickMiron_assign4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HexGameByPatrickMiron_assign4.txt; sourceTree = "<group>"; };
 		393F75EE27BADDE400F49866 /* Node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
 		393F75EF27BADDE400F49866 /* HexGameGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HexGameGraph.hpp; sourceTree = "<group>"; };
 		393F75F027BADDE400F49866 /* HexNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HexNode.hpp; sourceTree = "<group>"; };
@@ -72,7 +72,7 @@
 				393F75F327BADDE400F49866 /* Edge.hpp */,
 				393F75F427BADDE400F49866 /* Graph.hpp */,
 				393F75F127BADDE400F49866 /* HexGame.hpp */,
-				393F75ED27BADDE400F49866 /* HexGameByPatrickMiron.txt */,
+				393F75ED27BADDE400F49866 /* HexGameByPatrickMiron_assign4.txt */,
 				393F75EF27BADDE400F49866 /* HexGameGraph.hpp */,
 				393F75F027BADDE400F49866 /* HexNode.hpp */,
 				393F75F627BADDE400F49866 /* main.cpp */,
