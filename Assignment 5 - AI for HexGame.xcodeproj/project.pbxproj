@@ -37,7 +37,7 @@
 		393F75F527BADDE400F49866 /* Path.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Path.hpp; sourceTree = "<group>"; };
 		393F75F627BADDE400F49866 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "../../Part B - Assignment 4 - Hex Game/HexGame/Part B - Assignment 4 - Hex Game/main.cpp"; sourceTree = "<group>"; };
 		393F75F727BADDE400F49866 /* MST.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MST.hpp; sourceTree = "<group>"; };
-		393F75F927BAEC6400F49866 /* AI Monte Carlo Algorithm Diagram.drawio */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AI Monte Carlo Algorithm Diagram.drawio"; sourceTree = SOURCE_ROOT; };
+		393F75FA27BAEDFB00F49866 /* HexGame AI Algorithm Diagram.drawio */ = {isa = PBXFileReference; lastKnownFileType = text; path = "HexGame AI Algorithm Diagram.drawio"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +77,7 @@
 				393F75EF27BADDE400F49866 /* HexGameGraph.hpp */,
 				393F75F027BADDE400F49866 /* HexNode.hpp */,
 				393F75F627BADDE400F49866 /* main.cpp */,
-				393F75F927BAEC6400F49866 /* AI Monte Carlo Algorithm Diagram.drawio */,
+				393F75FA27BAEDFB00F49866 /* HexGame AI Algorithm Diagram.drawio */,
 				393F75F727BADDE400F49866 /* MST.hpp */,
 				393F75EE27BADDE400F49866 /* Node.hpp */,
 				393F75F527BADDE400F49866 /* Path.hpp */,
