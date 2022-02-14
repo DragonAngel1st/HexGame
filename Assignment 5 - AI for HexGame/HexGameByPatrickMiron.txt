@@ -1,0 +1,2506 @@
+//
+//  main.cpp
+//  CPP_testing
+//
+//  Created then Modified by Patrick Miron on 2022-02-10.
+//
+// NOTE TO THE READER : The Node,Edge,Graph,PriorityQueue,and MST classes were created in previous assignment, these were modified to become template class so they can be used just like a vector<Type> class. The new typename used is NodeType and is use like so Node<NodeType> or Edge<NodeType> ect. Please node that this task was not required but I wanted to learn generic template programing and polymorphism.
+//  The game of hex was implemented in HexGame.hpp and is instantiated here in the main file.
+//  A HexNode superclass was made from the Node<HexNode> class and a superclass HexGameGraph from the Graph<HexNode> base type was create to override functions of their base classes or to add data variables to support the game.
+//  In this text file all files are merge into one to enable us to put up all program in the assignment text file as required. See bellow.
+// As per required, the game hex program :
+//   1-Prints out a graph to the console
+//   2-Enables a player (or 2 in this case) to enter coordinates for a move and verifies if they are valid moves.
+//   3-Verifies if the last move made is a winning move. See HexGame implementation and the overriden getMinimumSpanningTree in HexGameGraph template class.
+
+#include <iostream>
+#include "HexGame.hpp"
+
+int main(int argc, const char * argv[]) {
+
+    int gameSize = 0;
+    //PRINT TITLE
+    cout << "Welcome to a game of Hex by Patrick Miron for the C++ class from professor Ira Pohl, Febuary 2022." << endl;
+    //PRINT INSTRUCTION
+    cout << "Please enter the size of game you wish to play: " << endl;
+    cin >> gameSize;
+    cout << endl;
+    
+    HexGame newHexGame(gameSize);
+    
+    
+    return 0;
+}
+
+/* RESULT FOR 5x5 game
+
+Welcome to a game of Hex by Patrick Miron for the C++ class from professor Ira Pohl, Febuary 2022.
+Please enter the size of game you wish to play:
+5
+
+
+. - . - . - . - .
+ \ / \ / \ / \ / \
+  . - . - . - . - .
+   \ / \ / \ / \ / \
+    . - . - . - . - .
+     \ / \ / \ / \ / \
+      . - . - . - . - .
+       \ / \ / \ / \ / \
+        . - . - . - . - .
+
+Please enter "1" if you want to play single player or "2" for a hot seat two player game of Hex. :2
+
+Player 1 : (RED)
+ Please enter coordinates for your next move.
+row #: 0
+
+column #: 0
+Verifying if (0, 0) is a valid location.
+
+R - . - . - . - .
+ \ / \ / \ / \ / \
+  . - . - . - . - .
+   \ / \ / \ / \ / \
+    . - . - . - . - .
+     \ / \ / \ / \ / \
+      . - . - . - . - .
+       \ / \ / \ / \ / \
+        . - . - . - . - .
+
+
+     Player 2 : (BLUE)
+ Please enter coordinates for your next move.
+row #: 1
+
+column #: 4
+Verifying if (1, 4) is a valid location.
+
+R - . - . - . - .
+ \ / \ / \ / \ / \
+  . - . - . - . - B
+   \ / \ / \ / \ / \
+    . - . - . - . - .
+     \ / \ / \ / \ / \
+      . - . - . - . - .
+       \ / \ / \ / \ / \
+        . - . - . - . - .
+
+etc.... until someone wins. Here Red wins
+
+Player 1 : (RED)
+ Please enter coordinates for your next move.
+row #: 0
+
+column #: 2
+Verifying if (0, 2) is a valid location.
+
+R - B - R - . - .
+ \ / \ / \ / \ / \
+  . - R - . - B - B
+   \ / \ / \ / \ / \
+    . - R - B - . - .
+     \ / \ / \ / \ / \
+      . - R - . - . - .
+       \ / \ / \ / \ / \
+        B - R - . - . - .
+
+Warning - There are still unvisited nodes but the graph is broken (incomplete)
+Congratulations, Player 1 you have won the game!
+Good luck next time, Player 1 !
+The Graph Deconstructor was called.
+Program ended with exit code: 0
+
+*/
+
+
+//
+//  Node.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-24.
+//
+
+//Node is a template class for the typename NodeType. This was modified so that Node can be modified later for each type of NodeType -> Node<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library. Here it is used to add a variable named "state" in the Node<HexNode> see the HexNode.hpp class.
+
+#ifndef Node_hpp
+#define Node_hpp
+
+#include <vector>
+#include <cmath>
+#include <iostream>
+
+using namespace std;
+
+const double Infinity = INFINITY;
+
+template <typename NodeType>
+class Edge;
+
+template <typename NodeType>
+class Node
+{
+
+public:
+    int nodeID; // I decided to use integers for nodeIDs but it is only for internal use. A table could be created to return letters instead.
+    int indexOfNodeInGraphVectorOfNodes; // The node memoize it's current location in the graph's vector of edges.
+    double shortestDistanceToCurrentNodeInPath = INFINITY; // All nodes are automatically instantiated with an Infinite value for shortest current path.
+    int indexOfNodeInUnvistedQueue; // The node memoize it's current location in the unvisited queue. Allows for O(1) time for all operations.
+    
+    vector<NodeType*> * ptrToVectorOfNeighborPtrs; // A vector of node ptrs for each node is maintained on the node for existing neighboring nodes. Allows for O(1) time for all operations.
+    vector<Edge<NodeType>*> * ptrToVectorDirectedEdges; // A vector of edge ptrs for each edge is maintained on the node for existing connected edges. Allows for O(1) time for all operations.
+
+    Edge<NodeType> * ptrToEdgeWithShortestDistance;
+    
+    //Here the empty node constructor is not needed since the nodeID is default to 0 in the next constructor signature and the compiler will automatically use it for no parameter.
+    //    Node():nodeID(0) //All nodes must be created with an ID, if using the empty parameter constructor, remember to update the node ID after.
+    //    {
+    //        // For evaluation purpouses, and program pathing, it's better to instantiate empty vector of neighbor nodes or edges instead of dealing with an null pointer.
+    //        ptrToVectorDirectedEdges = new vector<Edge*>;
+    //        ptrToVectorOfNeighborPtrs = new vector<Node*>;
+    //    }
+
+    // The self construction of the Graph is only using this node constructor.
+    Node<NodeType>(int nodeName=0);
+    
+    //Copy CONSTRUCTOR
+    Node<NodeType>(const NodeType &node);
+    // For evaluating the order of the nodes. The node with the current shortest distance to it is the one that comes first.
+//    void * operator new(size_t size);
+//    void operator delete(void * memory, size_t size) noexcept;
+    bool operator>(const NodeType& other) const;
+    bool operator<(const NodeType& other) const;
+    bool operator==(const NodeType& other) const;
+    bool operator!=(const NodeType& other) const;
+    static bool compareNodeID(NodeType * node, NodeType * other);
+    static bool compareNodeCurrentShortestPath(NodeType * node, NodeType * other);
+    NodeType& operator=(const NodeType& other);
+    ~Node();
+    Node(NodeType &&other) noexcept;
+    NodeType& operator=(NodeType &&other) noexcept;
+    // Friend function to be able to cout a node by it's ID. See the overiden ostream operator "<<" below.
+    friend std::ostream& operator<<(std::ostream& stream, const Node<NodeType>& node);
+};
+
+//IMPLEMENTATION
+//The self construction of the Graph is only using this node constructor.
+template <typename NodeType>
+Node<NodeType>::Node(int nodeName):nodeID(nodeName){
+    // For evaluation purpouses, and program pathing, it's better to instantiate empty vector of neighbor nodes or edges instead of dealing with an null pointer.
+    ptrToVectorDirectedEdges = new vector<Edge<NodeType>*>;
+    ptrToVectorOfNeighborPtrs = new vector<NodeType*>;
+    //cout << "The Node default CONSTRUCTOR was called. ID: " << nodeID << endl;
+}
+
+template <typename NodeType>
+Node<NodeType>::Node(const NodeType &node)
+{
+    //This constructor should not be called since the implementation uses ptrs of nodes. Never directly copy a node! It can have too much data.
+    cout << "The Node Copy CONSTRUCTOR was called." << endl;
+}
+
+template <typename NodeType>
+NodeType& Node<NodeType>::operator=(const NodeType& other)
+{
+    //This assignment operator should not be called since the implementation uses ptrs of nodes. Never directly copy a node! It can have too much data.
+    cout << "The Node Assignment OPERATOR was called." << endl;
+    return *this;
+};
+
+//Move Constructor
+template <typename NodeType>
+Node<NodeType>::Node(NodeType &&other) noexcept
+{
+    cout << "The Node Move CONSTRUCTOR was called." << endl;
+}
+//Move Assignment
+template <typename NodeType>
+NodeType& Node<NodeType>::operator=(NodeType &&other) noexcept
+{
+    cout << "The Node Move ASSIGNMENT was called." << endl;
+    return *this;
+}
+
+// For evaluating the order of the nodes. The node with the current shortest distance to it is the one that comes first.
+template <typename NodeType>
+bool Node<NodeType>::operator>(const NodeType& other) const
+{
+    return this->shortestDistanceToCurrentNodeInPath > other.shortestDistanceToCurrentNodeInPath;
+};
+
+template <typename NodeType>
+bool Node<NodeType>::operator<(const NodeType& other) const
+{
+    return this->shortestDistanceToCurrentNodeInPath < other.shortestDistanceToCurrentNodeInPath;
+};
+
+template <typename NodeType>
+bool Node<NodeType>::operator==(const NodeType& other) const
+{
+    return this->shortestDistanceToCurrentNodeInPath == other.shortestDistanceToCurrentNodeInPath;
+}
+
+template <typename NodeType>
+bool Node<NodeType>::operator!=(const NodeType& other) const
+{
+    return this->shortestDistanceToCurrentNodeInPath != other.shortestDistanceToCurrentNodeInPath;
+}
+
+template <typename NodeType>
+bool Node<NodeType>::compareNodeID(NodeType * node, NodeType * other)
+{
+    return (node->nodeID < other->nodeID);
+}
+
+template <typename NodeType>
+bool Node<NodeType>::compareNodeCurrentShortestPath(NodeType * node, NodeType * other)
+{
+    return (node->shortestDistanceToCurrentNodeInPath < other->shortestDistanceToCurrentNodeInPath);
+}
+
+template <typename NodeType>
+Node<NodeType>::~Node()
+{
+    //cout << "The Node DECONSTRUCTOR was called. ID: " << nodeID << endl;
+    this->ptrToEdgeWithShortestDistance = nullptr;
+    this->ptrToVectorOfNeighborPtrs->clear();
+    this->ptrToVectorDirectedEdges->clear();
+    //delete this->ptrToEdgeWithShortestDistance;
+    delete this->ptrToVectorOfNeighborPtrs;
+    delete this->ptrToVectorDirectedEdges;
+}
+
+
+
+// Overloading the "<<" operator in ostream for the "std::cout" to be a "std::cout" to print the description of the node. Not completely implemented.
+template <typename NodeType>
+std::ostream& operator<<(std::ostream& stream, const Node<NodeType>& node)
+{
+    return stream << "The node ID: " << node.nodeID;
+}
+#endif /* Node_hpp */
+
+//
+//  Edge.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-24.
+//
+
+//Edge is a template class for the typename NodeType. This was modified so that the templated Graph/Node/Edge/etc classes can be modified later for each type of NodeType -> ex: Graph<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library.
+
+#ifndef Edge_hpp
+#define Edge_hpp
+
+#include <stdio.h>
+#include <iostream>
+
+using namespace std;
+//Bellow class is forwarded
+template <typename NodeType>
+class Node;
+
+template <typename NodeType>
+class Edge
+{
+public:
+    Node<NodeType> * fromNodePtr; // starting node of edge.
+    Node<NodeType> * toNodePtr; // ending node of edge
+    int fromNodeID;
+    int toNodeID;
+    //--------------------   Added MST f*or assig*nment 4.
+    //enum color for the color of the edge, a single color must be assign to an edge or none at all;
+    double cost; // cost of the edge, ex: distance if the graph represents roads between towns.
+    int indexOfDirectedEdgeInGraphVectorOfEdges; // The edge memoize it's location in the vector of edges in the graph. Allows for all operations in O(1)
+    Edge();
+    Edge(Node<NodeType> & fromNode, Node<NodeType> & toNode);
+    Edge(const Edge& edge);
+    Edge& operator=(const Edge& other);
+    Edge(Edge<NodeType> &&other) noexcept;
+    Edge& operator=(Edge &&other) noexcept;
+//    void * operator new(size_t size);
+//    void operator delete(void * memory, size_t size) noexcept;
+    ~Edge();
+};
+
+//IMPLEMENTATION
+template <typename NodeType>
+Edge<NodeType>::Edge()
+{
+    //cout << "The Edge Default CONSTRUCTOR was called." << endl;
+};
+
+template <typename NodeType>
+Edge<NodeType>::Edge(Node<NodeType> & _fromNode, Node<NodeType> & _toNode)//:fromNode(fromNode),toNode(toNode)
+{
+    fromNodePtr = &_fromNode;
+    fromNodeID = fromNodePtr->nodeID;
+    toNodePtr = &_toNode;
+    toNodeID = toNodePtr->nodeID;
+    //cout << "The Edge custom CONSTRUCTOR was called. From nodeID: " <<fromNodePtr->nodeID << " to nodeID: " << toNodePtr->nodeID << endl;
+};
+
+template <typename NodeType>
+Edge<NodeType>::Edge(const Edge& edge)
+{
+    //This constructor should not be called since the implementation uses ptrs of nodes. Never directly copy a node! It can have too much data.
+    std::cout << "The Edge Copy CONSTRUCTOR was called." << std::endl;
+}
+
+template <typename NodeType>
+Edge<NodeType>& Edge<NodeType>::operator=(const Edge<NodeType>& other)
+{
+    //This assignment should not be called since the implementation uses ptrs of nodes. Never directly copy a node! It can have too much data.
+    std::cout << "The Edge Assignment OPERATOR was called." << std::endl;
+    return *this;
+};
+
+//Move Constructor
+template <typename NodeType>
+Edge<NodeType>::Edge(Edge<NodeType> &&other) noexcept
+{
+    cout << "The Edge Move CONSTRUCTOR was called." << endl;
+}
+//Move Assignment
+template <typename NodeType>
+Edge<NodeType>& Edge<NodeType>::operator=(Edge &&other) noexcept
+{
+    cout << "The Edge Move ASSIGNMENT was called." << endl;
+    return *this;
+}
+
+
+template <typename NodeType>
+Edge<NodeType>::~Edge()
+{
+    //cout << "The Edge DECONSTRUCTOR was called. From nodeID: " <<fromNodeID << " to nodeID: " << toNodeID << endl;
+    fromNodePtr = nullptr;
+    toNodePtr = nullptr;
+    toNodeID = -1;
+    fromNodeID = -1;
+    indexOfDirectedEdgeInGraphVectorOfEdges = -1;
+}
+
+
+
+
+
+#endif /* Edge_hpp */
+
+//
+//  Graph.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-24.
+//
+
+// Note to self: To change the path where the program runs in and load other file from (in XCode) :
+//   Goto to the menu Product > Scheme > Edit Scheme > Run > options and enable the Working Directory [] Use custom directory and choose where the main.cpp and input files are.
+
+//Graph is a template class for the typename NodeType. This was modified so that Graph can be modified later for each type of NodeType -> Graph<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library.
+
+#ifndef Graph_h
+#define Graph_h
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#include <sys/time.h>
+#include <fstream>
+#include <cmath>
+//If the object of the bellow class must be instantiated in this template they must also have their file included here.
+#include "Edge.hpp"
+#include "Node.hpp"
+
+using namespace std;
+
+//Bellow class is forwarded
+template <typename NodeType>
+class Edge;
+
+//Bellow class is forwarded
+template <typename NodeType>
+class Node;
+
+//Bellow class is forwarded
+template <typename NodeType>
+class Path;
+
+//Bellow class is forwarded
+template <typename NodeType>
+class MST;
+
+//Bellow class is forwarded
+template <typename NodeType>
+class PriorityQueue;
+
+/// Graph of nodes, running in 0(1) time.
+template <typename NodeType>
+class Graph
+{
+public:
+    int TotalNodes() {return _totalNodes;}; // Maintains number of nodes/vertices in graph
+    int TotalEdges() {return _totalEdges;}; // Maintains number of edges in graph
+    int srandSeed() {return _srandSeed;}; // For reporting purpouse, each graphs randomizer seed is recorded here.
+    const vector<NodeType*> * const getNodes() const;
+    const vector<Edge<NodeType>*> * const getEdges() const;
+    // Function that return true if an edge exist in the graph in O(1) times.
+    bool isEdge(const NodeType & ptrStartNode, const NodeType & ptrToEndNode) const;
+    
+    // Returns an edge in O(1)
+    Edge<NodeType> * getEdgePtr(const NodeType & fromNode, const NodeType & toNode);
+    
+    // Returns true if node exist in the graph in O(1). Since the graph constrols the ID creation of each node, we can use the size of the vector of node ptrs.
+    // Warning, creating an empty graph and not adding nodes in order of IDs starting a 0 will not give correct values from this function.
+    //   Since this was not requested to create graph manually in the assignment, this function should not be used if one does so.
+    bool nodeExistInGraphNodeList(int nodeID);
+    
+    // Function to create a graph from a vector of vectors of doubles (A matrix of edges cost per nodes, undirected)
+    // Traverse tree with breath first and get all nodes that are connected
+    void createGraphStructureFrom(vector<vector<double>> matrixOfNodeEdgeCosts);
+    //Add undirectedEdge in O(1).
+    void addUndirectedEdge(NodeType & fromNodePtr, NodeType & toNodePtr, double edgeLenght);
+    
+    //Add directedEdge in O(1).
+    void addDirectedEdge(NodeType & fromNodePtr, NodeType & toNodePtr, double edgeLenght);
+    
+    // Warning, remove Edge is in O(1+1+1) which is same theorically a O(1) times since it has to look for the edge at 3 locations.
+    void removeDirectedEdge(NodeType & fromNode, NodeType & toNode);
+    
+    // Sets edge lenght/cost in O(1).
+    void setDirectedEdgeLenght(const NodeType & fromNode, const NodeType & toNode, double edgeLenght);
+    
+    // Sets a undirected edge (edge in both direction) to fromNode and toNode.
+    void setUndirectedEdgeLenght(NodeType & fromNode, NodeType & toNode, double edgeLenght);
+    
+    // Returns the edge lenght in O(1).
+    double getEdgeLenght(const NodeType * fromNode, const NodeType * toNode) const;
+    
+    // Adds a column and row to the connected nodes matrix in O(1) and returns a pointer to the Node created.
+    NodeType * addNode(int nodeID);
+    
+    // Prints graph to the console as well as the all internal vectors and matrix.
+    void print();
+    
+    // This method returns the shortest path between 2 nodes using Diskstra's Shortest Path Algorithm
+    Path<NodeType> * getShortestPath(NodeType * ptrToStartNode, NodeType * ptrToEndNode=nullptr);
+    
+    // Return a node pointer from it node ID from the internal vector of ptr of nodes.
+    NodeType * getNodePtr(int nodeID);
+    
+    //--------------------   Added getMinimumSpanningTree function for assignment 4.
+    //Function that returns the minimum spanning tree for the graph using PRIM's algorithm
+    MST<NodeType> getMinimumSpanningTreePRIM(int startingNodeID=0);
+    
+    
+    ///Constructors
+    ///Empty constructor to be used if we want to use the function to create a graph from matrix of edge lenghts. See description of Graph class.
+    Graph();
+    ///Warning this constructor only creates an empty _connectedNodesDirectedEdgePtrsMatrix with all null pointers. Use this construction only if user needs to create a graph manually. NOT recommended.
+    Graph(int graphTotalNodes);
+    
+    // This constructor creates a graph of graphTotalNodes with random edge density between edgeDensityMin and edgeDensityMax
+    //
+    /// This constructor creates a graph of graphTotalNodes with random edge density between edgeDensityMin and edgeDensityMax and with random edge lenght between edgeLenghtMin and edgeLenghtMax
+    Graph(int graphTotalNodes, double edgeDensity, double edgeLenghtMin, double edgeLenghtMax);
+    
+    // This constructor loads a graph from file where the first integer (must be first item in the file) is the size of the graph (total number of nodes) and all the next lines are integer triples where the first and second are nodes(forming an edge from first to second) with the third being the cost of this edge.
+    Graph(string inputFile);
+    ~Graph();
+//    void * operator new(size_t size);
+//    void operator delete(void * memory, size_t size) noexcept;
+protected:
+    // Private matrix of edge ptrs, not accessible outside graph since adding and removing edge require other maintenance to keep the graph operation at O(1) times.
+    vector<vector<Edge<NodeType>*>> _connectedNodesDirectedEdgePtrsMatrix;
+    
+    // function that return true if the node is valid from it's ID. Operates at O(1).
+    bool _isNodeValid(const int nodeID) const;
+    
+    // private function to return a random lenght depending on a min and max lenght from random graph creation function.
+    double _randomEdgeLenghtBetween(double minLenght, double maxLenght);
+    
+    // private funtion that return true if the random generated value is within the edge density by random graph creation function.
+    bool _createEdgeDependingOn(double edgeDensity);
+    
+    // These are private varriable that must be maintained by the graph and therefore cannot be access externally.
+    vector<NodeType*> _graphNodeList;
+    vector<Edge<NodeType>*> _graphEdgeList;
+    int _totalNodes = 0;
+    int _totalEdges = 0;
+    int _srandSeed;
+};
+
+template <typename NodeType>
+const vector<NodeType*> * const Graph<NodeType>::getNodes() const
+{
+    const vector<NodeType*> nodeList(_graphNodeList.begin(),_graphNodeList.end());
+    return nodeList;
+};
+
+template <typename NodeType>
+const vector<Edge<NodeType>*>* const Graph<NodeType>::getEdges() const
+{
+    const vector<Edge<NodeType>*> * const edgeList(_graphEdgeList.begin(),_graphEdgeList.end());
+    return edgeList;
+};
+
+// Function that return true if an edge exist in the graph in O(1) times.
+template <typename NodeType>
+bool Graph<NodeType>::isEdge(const NodeType & ptrStartNode, const NodeType & ptrToEndNode) const
+{   if (_isNodeValid(ptrStartNode.nodeID) && _isNodeValid(ptrToEndNode.nodeID))
+{
+    if (_connectedNodesDirectedEdgePtrsMatrix[ptrStartNode.nodeID][ptrToEndNode.nodeID] != nullptr)
+    {
+        return true;
+    }
+}
+    return false;
+}
+
+// Returns an edge in O(1)
+template <typename NodeType>
+Edge<NodeType> * Graph<NodeType>::getEdgePtr(const NodeType & fromNode, const NodeType & toNode)
+{
+    if (isEdge(fromNode, toNode))
+    {
+        return _connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID];
+    }
+    else
+    {
+        cout << "Error, the edge does not exist." << endl;
+    }
+    return nullptr;
+}
+
+// Returns true if node exist in the graph in O(1). Since the graph constrols the ID creation of each node, we can use the size of the vector of node ptrs.
+// Warning, creating an empty graph and not adding nodes in order of IDs starting a 0 will not give correct values from this function.
+//   Since this was not requested to create graph manually in the assignment, this function should not be used if one does so.
+template <typename NodeType>
+bool Graph<NodeType>::nodeExistInGraphNodeList(int nodeID)
+{
+    if (!_graphNodeList.empty())
+    {
+        if (_graphNodeList.size() >= nodeID+1)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Function to create a graph from a vector of vectors of doubles (A matrix of edges cost per nodes, undirected)
+// Traverse tree with breath first and get all nodes that are connected
+template <typename NodeType>
+void Graph<NodeType>::createGraphStructureFrom(vector<vector<double>> matrixOfNodeEdgeCosts)
+{
+    int rowIndex = 0;
+    int colIndex;
+    
+    // Here the graph maintains a matrix of edge ptrs to enable retrieve of an edge and nodes in O(1).
+    _connectedNodesDirectedEdgePtrsMatrix = vector<vector<Edge<NodeType>*>>(matrixOfNodeEdgeCosts.size(), vector<Edge<NodeType>*>(matrixOfNodeEdgeCosts.size(), nullptr ));
+    
+    // Row data is a vector of cost/distances between the row as the fromNode ID to the toNode ID which is a column.
+    // In other words, the row index is the id of the node that the edge start at and the column index is the id of the node that the edge ends.
+    // Iterate through all the edges each start nodes as rows
+    for(vector<double> eachRow : matrixOfNodeEdgeCosts)
+    {
+        colIndex = 0;
+        NodeType * ptrToRowNode;
+        if (!nodeExistInGraphNodeList(rowIndex))
+        {
+            ptrToRowNode = addNode(rowIndex);
+        }
+        else
+        {
+            ptrToRowNode = _graphNodeList[rowIndex];
+        }
+        
+        // Iterate through all the edges end nodes as columns
+        for(double distance : eachRow)
+        {
+            // Ignore all edges that result in a node pathing to itself
+            if (rowIndex != colIndex)
+            {
+                NodeType * ptrToConnectingNode;
+                // If the node ptr does not already exist in the graph create it and if it exist get ptr to it.
+                if (!nodeExistInGraphNodeList(colIndex))
+                {
+                    ptrToConnectingNode = addNode(colIndex);
+                }
+                else
+                {
+                    ptrToConnectingNode = _graphNodeList[colIndex];
+                    //cout << "Column-Found node with ID: " << ptrToConnectingNode->nodeID << endl;
+                }
+                // If the cost/distance is greater then 0.0 create an directed edge.
+                if (distance > 0.0)
+                {
+                    //cout << "--------------------------------------------" << endl;
+                    //cout << "Trying to add directed edge from node:" << ptrToRowNode->nodeID << " to node: " << ptrToConnectingNode->nodeID << endl;
+                    //The createGraphStructure creates null ptr for all the
+                    addDirectedEdge(*ptrToRowNode, *ptrToConnectingNode, distance);
+                    //cout << "Added directed edge from node:" << ptrToRowNode->nodeID << " to node: " << ptrToConnectingNode->nodeID << endl;
+                }
+            }
+            colIndex++;
+        }
+        rowIndex++;
+    }
+}
+//Add undirectedEdge in O(1).
+template <typename NodeType>
+void Graph<NodeType>::addUndirectedEdge(NodeType & fromNodePtr, NodeType & toNodePtr, double edgeLenght)
+{
+    if (_isNodeValid(fromNodePtr.nodeID) && _isNodeValid(toNodePtr.nodeID)) {
+        //        if (_connectedNodesDirectedEdgePtrsMatrix[fromNodePtr->nodeID][toNodePtr->nodeID] == NULL)
+        //        {
+        //            // Here we assume that a undirected edge is the same as two edges from both the starting and ending node.
+        addDirectedEdge(fromNodePtr, toNodePtr, edgeLenght);
+        addDirectedEdge(toNodePtr, fromNodePtr, edgeLenght);
+        //        }
+    }
+    // Mostly for debuging. May be used in the future for exception handling.
+    else
+    {
+        if (!_isNodeValid(fromNodePtr.nodeID)) {
+            cout << "Error, the fromNode does not exist." << endl;
+            return;
+        }
+        cout << "Error, the toNode does not exist." << endl;
+        return;
+    }
+}
+
+//Add directedEdge in O(1).
+template <typename NodeType>
+void Graph<NodeType>::addDirectedEdge(NodeType & fromNodePtr, NodeType & toNodePtr, double edgeLenght)
+{
+    if (_isNodeValid(fromNodePtr.nodeID) && _isNodeValid(toNodePtr.nodeID)) {
+        //If the edge does not exist at all
+        Edge<NodeType> * edgePtr = new Edge<NodeType>(fromNodePtr, toNodePtr);
+        _totalEdges++;
+        edgePtr->cost = edgeLenght;
+        
+        _connectedNodesDirectedEdgePtrsMatrix[fromNodePtr.nodeID][toNodePtr.nodeID] = edgePtr;
+        fromNodePtr.ptrToVectorDirectedEdges->push_back(edgePtr);
+        fromNodePtr.ptrToVectorOfNeighborPtrs->push_back(&toNodePtr);
+        _graphEdgeList.push_back(edgePtr);
+        edgePtr->indexOfDirectedEdgeInGraphVectorOfEdges = int(_graphEdgeList.size()-1);
+    }
+    // The Dijkstra's function properly uses the addDirectedEdge function. This else if for future exception handling and if a user chooses to create graph manualy which is not recommended but possible.
+    else
+    {
+        cout << "Error, either the fromNode or the toNode does not exist." << endl;
+        return;
+    }
+}
+
+// Warning, remove Edge is in O(1+1+1) which is same theorically a O(1) times since it has to look for the edge at 3 locations.
+template <typename NodeType>
+void Graph<NodeType>::removeDirectedEdge(NodeType & fromNode, NodeType & toNode)
+{
+    if (_isNodeValid(fromNode.nodeID) && _isNodeValid(toNode.nodeID))
+    {
+        if (_connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID] != nullptr)
+        {
+            //Delete edge ptr in graph's edge list
+            int edgeIndex = getEdgePtr(fromNode, toNode)->indexOfDirectedEdgeInGraphVectorOfEdges;
+            delete(_graphEdgeList[edgeIndex]);
+            
+            //Delete edge ptr in Node list's vector of edge pointers
+            int nodeIndex = fromNode.indexOfNodeInGraphVectorOfNodes;
+            
+            delete(_graphNodeList[nodeIndex]);
+            _graphNodeList.erase(_graphNodeList.begin()+nodeIndex);
+            
+            //Delete edge ptr in connectedNodesMatrix, here we only set the pointer to nullptr since the matrix structure must be maintained.
+            _connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID] = nullptr;
+            
+            //Decrement TotalEdges
+            _totalEdges--;
+        }
+    }
+    // Else mostly used for debugging and future exception handling.
+    else
+    {
+        cout << "Error, the edge does not exist." << endl;
+    }
+}
+
+// Sets edge lenght/cost in O(1).
+template <typename NodeType>
+void Graph<NodeType>::setDirectedEdgeLenght(const NodeType & fromNode, const NodeType & toNode, double edgeLenght)
+{
+    if (_isNodeValid(fromNode.nodeID) && _isNodeValid(toNode.nodeID))
+    {
+        if (_connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID] != nullptr)
+        {
+            cout << "Error, a directed edge between fromNode and toNode does not exist." << endl;
+            return;
+        }
+        Edge<NodeType> * currentEdgePtr = _connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID];
+        currentEdgePtr->cost = edgeLenght;
+    }
+    
+}
+
+// Sets a undirected edge (edge in both direction) to fromNode and toNode.
+template <typename NodeType>
+void Graph<NodeType>::setUndirectedEdgeLenght(NodeType & fromNode, NodeType & toNode, double edgeLenght)
+{
+    if ((_connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID] != nullptr) && (_connectedNodesDirectedEdgePtrsMatrix[toNode.nodeID][fromNode.nodeID] != nullptr))
+    {
+        setDirectedEdgeLenght(fromNode, toNode, edgeLenght);
+        setDirectedEdgeLenght(toNode, fromNode, edgeLenght);
+    }
+    // THis else should not happen but is there for debugging and future exception handling.
+    else
+    {
+        if (_connectedNodesDirectedEdgePtrsMatrix[fromNode.nodeID][toNode.nodeID] != nullptr)
+        {
+            cout << "Error, a directed edge between fromNode and toNode does not exist." << endl;
+            return;
+        }
+        else
+        {
+            cout << "Error, a directed edge between toNode and fromNode does not exist." << endl;
+            return;
+        }
+    }
+}
+
+// Returns the edge lenght in O(1).
+template <typename NodeType>
+double Graph<NodeType>::getEdgeLenght(const NodeType * fromNode, const NodeType * toNode) const
+{
+    if (_isNodeValid(fromNode->nodeID) && _isNodeValid(toNode->nodeID))
+    {
+        if (isEdge(*fromNode, *toNode))
+        {
+            return _connectedNodesDirectedEdgePtrsMatrix[fromNode->nodeID][toNode->nodeID]->cost;
+        }
+    }
+    return INFINITY;
+}
+
+// Adds a column and row to the connected nodes matrix in O(1) and returns a pointer to the Node created.
+template <typename NodeType>
+NodeType * Graph<NodeType>::addNode(int nodeID)
+{
+    //    if ((int(_connectedNodesDirectedEdgePtrsMatrix.size()) <= (nodeID)))
+    //    {
+    //        vector<Edge*> newRow = vector<Edge*>(nodeID+1, nullptr);
+    //        //Cannot use For Loop range here since adding new edge would invalidate the iterator.
+    //        //In other we cannot add items in a vector while iterating through it using iterators.
+    //        for(int index = 0; index<_connectedNodesDirectedEdgePtrsMatrix.size(); index++)
+    //        {
+    //            Edge * edgePtr = nullptr;
+    //            _connectedNodesDirectedEdgePtrsMatrix[index].push_back(edgePtr);
+    //        }
+    //        _connectedNodesDirectedEdgePtrsMatrix.push_back(newRow);
+    //    }
+    NodeType * newNodePtr;
+    newNodePtr = new NodeType(nodeID);
+    _graphNodeList.push_back(newNodePtr);
+    assert(_graphNodeList[nodeID]->nodeID == nodeID);
+    newNodePtr->indexOfNodeInGraphVectorOfNodes = int(_graphNodeList.size()-1);
+    
+    _totalNodes++;
+    return newNodePtr;
+}
+
+// Prints graph to the console as well as the all internal vectors and matrix.
+template <typename NodeType>
+void Graph<NodeType>::print()
+{
+    cout << "{";
+    int rowIndex = 0;
+    for (vector<Edge<NodeType>*> row: _connectedNodesDirectedEdgePtrsMatrix)
+    {
+        int columnIndex = 0;
+        if (rowIndex > 0)
+        {
+            cout << " ";
+        }
+        cout << "{ ";
+        for (auto item: row) {
+            cout << rowIndex << "->" << columnIndex;
+            if (item != NULL)
+            {
+                cout << " " << item->cost;
+            }
+            else{
+                cout << " -";
+            }
+            if (columnIndex < row.size()-1)
+            {
+                cout << ", ";
+            }
+            columnIndex++;
+        }
+        cout << " }";
+        if (rowIndex < row.size()-1)
+        {
+            cout << endl;
+        }
+        rowIndex++;
+    }
+    cout << "}" << endl;
+}
+
+// This method returns the shortest path between 2 nodes using Diskstra's Shortest Path Algorithm
+template <typename NodeType>
+Path<NodeType> * Graph<NodeType>::getShortestPath(NodeType * ptrToStartNode, NodeType * ptrToEndNode)
+{
+    // My class Path is a vector of nodes and only assigns starting node when initializing with
+    // 0.0 as it's Node.shortestDistanceToCurrentNodeInPath as a double.
+    if (!_graphNodeList.empty())
+    {
+        // Next for loop is necessary evil until shortest distance is ported to Path as it should.
+        for (auto eachNodePtr : _graphNodeList)
+        {
+            eachNodePtr->shortestDistanceToCurrentNodeInPath = INFINITY;
+        }
+        // create a Path with the first node
+        Path<NodeType> * shortestVisitedPath = new Path(ptrToStartNode);
+        // We set the paths starting distance as good coding since the Path class does that automatically when adding the start node.
+        shortestVisitedPath->totalDistance = 0.0;
+        // Ptr to node currently being evaluated during the next loop
+        
+        Node<NodeType> * ptrToCurrentNode;
+        // Ptr to shortest node currently being evaluated in the "Neighboring" nodes loop.
+        Node<NodeType> * ptrToShortestEdgeNode = nullptr;
+        
+        // Create new queue for unvisited nodes
+        PriorityQueue<NodeType> unvisitedQueue;
+        // Create new priority queue called pQ for visited nodes.
+        PriorityQueue<NodeType> pQ;
+        
+        
+        // add all nodes to unvisited PriorityQueue
+        for (Node<NodeType> * nodePtr : _graphNodeList)
+        {
+            unvisitedQueue.addNode(nodePtr);
+        }
+        // Remove the start node from the unvisited queue.
+        unvisitedQueue.removeNode(ptrToStartNode);
+        // Add the start node to the visited queue
+        pQ.addNode(ptrToStartNode);
+        // Set the currently evaluated node ptr to the start node.
+        ptrToCurrentNode = ptrToStartNode;
+        // Make sure it's shortest distance to it for the path is 0.0 THis is redundant again but good practice.
+        ptrToCurrentNode->shortestDistanceToCurrentNodeInPath = 0.0;
+        
+        //Start loop here
+        int iterationCount = 0; // iteration counter
+        while (!unvisitedQueue.empty())
+        {
+            // Set the current shortest edge for the loop of ptr to neighbor nodes.
+            double currentShortestEdge = INFINITY;
+            // Get a vector with the pointers of neighboring nodes of the current node
+            vector<Node<NodeType>*> vectorOfPtrsToCurrentNodesNeigbors = *(ptrToCurrentNode->ptrToVectorOfNeighborPtrs);
+            // If there is neighboring nodes then continue, else the path is unconnected with the next nodes from starting node see else for what happens next if this is the case.
+            if (vectorOfPtrsToCurrentNodesNeigbors.size() > 0)
+            {
+                // Run through all the neighbor nodes and record to evaluate each of them
+                for( NodeType * currentNeighborPtr : vectorOfPtrsToCurrentNodesNeigbors)
+                {
+                    // If the node exist in the in the unvisted queue (here we could also use if it's not in visited queue) and updates it
+                    if (unvisitedQueue.nodeExist(currentNeighborPtr))
+                    {
+                        // Get the edge length/cost between current node and its current neighboor
+                        double edgeLengthCurrentToNeighbor = getEdgeLenght(ptrToCurrentNode, currentNeighborPtr);
+                        
+                        // Update the shortest distance to current neighbor or current to distance from current node (edgeLengtCurrentToNeighbor) + the previous node's(here we used the current node since the previous of the current neighbor is the current node) shortest distance
+                        if (edgeLengthCurrentToNeighbor < currentNeighborPtr->shortestDistanceToCurrentNodeInPath)
+                        {
+                            currentNeighborPtr->shortestDistanceToCurrentNodeInPath = ptrToCurrentNode->shortestDistanceToCurrentNodeInPath + edgeLengthCurrentToNeighbor;
+                        }
+                        
+                        // If the currentNeighbor's distance is less then the current shortest edge, then set the currentShortestEdge to edge of the current neighbor as well as ptr to shortest edge node to current neighbor node.
+                        if (edgeLengthCurrentToNeighbor < currentShortestEdge)
+                        {
+                            currentShortestEdge = edgeLengthCurrentToNeighbor;
+                            ptrToShortestEdgeNode = currentNeighborPtr;
+                        }
+                    }
+                }
+                
+                //Warning if the shortest edge node is the same ptr as the ptrToCurrent node, then the graph is unconnected and the last node did not have any neighbors left in the queue. Or in the case of the startNode, this pointer will still be nullptr.
+                if (ptrToCurrentNode == ptrToShortestEdgeNode || ptrToShortestEdgeNode == NULL)
+                {
+                    // Set the current node to previous node
+                    Node<NodeType> * ptrToPreviousNode = ptrToCurrentNode;
+                    // We get the next current node from the unvisited queue. Order does not really matter here.
+                    ptrToCurrentNode = unvisitedQueue.getNextNode();
+                    // Remove this current node from the unvisited queue.
+                    unvisitedQueue.removeNode(ptrToCurrentNode);
+                    //FIXME: This work is not required for homework but should be fixed to do store the node in a disconnected set
+                    // If the next node is still the same then pop it off the unvisited Q
+                    // We have to evaluate this just in case that the new node from the unvisited queue
+                    //  happens to be shortest edge neighbor node to the previous node (previous to current node)
+                    //  which was not removed from the stack since it's previous node has no neighboor.
+                    //  Note, after changing the order of this and bellow "if" statements, this does not seem to
+                    //  hapen anymore and maybe redundant.
+                    if (ptrToCurrentNode == ptrToPreviousNode)
+                    {
+                        //cout << "WARNING - The graph is disconnected from node " << ptrToCurrentNode->nodeID << endl;
+                        ptrToCurrentNode = unvisitedQueue.getNextNode();
+                    }
+                    //Set the ptr to shortest edge node to nullptr for next iteration of the current loop.
+                    ptrToShortestEdgeNode = nullptr;
+                    // If the univisted queue is empty or the ptrToCurrentNode is a nullptr, exit the function and
+                    // return the current path as the current shortest path. This returns the current "CONNECTED" shortest
+                    // path.
+                    if (unvisitedQueue.empty() || ptrToCurrentNode == nullptr)
+                    {
+                        return shortestVisitedPath;
+                    }
+                    iterationCount++;
+                    //Exit current loop early
+                    continue;
+                }
+                // Add the ptr to shortest edge node of the neighbor to the shortest path.
+                shortestVisitedPath->addNode(ptrToShortestEdgeNode);
+                // Remove the ptr to shortes edge node from the unvisted queue
+                unvisitedQueue.removeNode(ptrToShortestEdgeNode);
+                // Add this pointer to visited queue
+                pQ.addNode(ptrToShortestEdgeNode);
+                // Set the next current node to the current shortest edge node.
+                ptrToCurrentNode = ptrToShortestEdgeNode;
+            }
+            // If the case fails, set ptr to current node to the next node on the unvisited queue.
+            //  which one is chosen is not important and does not matter
+            else
+            {
+                ptrToCurrentNode = unvisitedQueue.getNextNode();
+                // Set the ptr to shortest edgenode to nullptr. Done for good pratice.
+                ptrToShortestEdgeNode = nullptr;
+            }
+            
+            // If we discover that ptr to current node is the same a the ptrToEnd node, exit the shortest path function and return the current shortest path, we have arrived at destination.
+            if(ptrToEndNode != nullptr && ptrToCurrentNode->nodeID == ptrToEndNode->nodeID)
+            {
+                return shortestVisitedPath;
+            }
+            // If our ptr to current node has not been set to next node or has be set to nullptr, exit shortest path function and return the current shortest path, there are no more nodes left in the unvisited queue.
+            if (ptrToCurrentNode == nullptr)
+            {
+                return shortestVisitedPath;
+            }
+            iterationCount++;
+        }
+        return shortestVisitedPath;
+    }
+    return NULL;
+}
+
+// Return a node pointer from it node ID from the internal vector of ptr of nodes.
+template <typename NodeType>
+NodeType * Graph<NodeType>::getNodePtr(int nodeID)
+{
+    return _graphNodeList[nodeID];
+}
+
+//--------------------   Added getMinimumSpanningTree function for assignment 4.
+//Function that returns the minimum spanning tree for the graph using PRIM's algorithm
+template <typename NodeType>
+MST<NodeType> Graph<NodeType>::getMinimumSpanningTreePRIM(int startingNodeID)
+{
+    //Create the tree
+    MST<NodeType> minimumSpanningTree;
+    //Create a priority queue for all unvisited nodes
+    PriorityQueue<NodeType> pqUnvisited;
+    //Arbitraly choose the starting node
+    NodeType * ptrToCurrentNode = getNodePtr(startingNodeID);
+    
+    //Reset shortestDistance of each Node to infinity
+    for (auto &nodePtr : _graphNodeList)
+    {
+        nodePtr->shortestDistanceToCurrentNodeInPath = INFINITY;
+        //Do not include the starting node in the unvisited nodes, saves on more work later
+        if (nodePtr->nodeID != startingNodeID)
+        {
+            pqUnvisited.addNode(nodePtr);
+        }
+    }
+    //Set starting node's shortest distance to 0.
+    ptrToCurrentNode->shortestDistanceToCurrentNodeInPath = 0;
+    
+    //Repeat until the unvisited node queue is empty or the graph is not connected.
+    while (!pqUnvisited.empty())
+    {
+        //Iterate through the neighbors of the current node and updates it's shortest distance to it.
+        vector<NodeType*> vectorOfPtrsToCurrentNodesNeigbors = *(ptrToCurrentNode->ptrToVectorOfNeighborPtrs);
+        for (auto currentNeighborPtr : vectorOfPtrsToCurrentNodesNeigbors )
+        {
+            int costToCurrentNeighbor = getEdgeLenght(ptrToCurrentNode, currentNeighborPtr);
+            //If the current edge cost to the current neighbor is less then previous cost then store this value as the new shortestDistance...
+            //Make sure to record the short edge to get to the current neighbor
+            if (costToCurrentNeighbor < currentNeighborPtr->shortestDistanceToCurrentNodeInPath)
+            {
+                currentNeighborPtr->shortestDistanceToCurrentNodeInPath = costToCurrentNeighbor;
+                //Record the shortest edge of the current neighboor
+                currentNeighborPtr->ptrToEdgeWithShortestDistance = getEdgePtr(*ptrToCurrentNode, *currentNeighborPtr);
+            }
+        }
+        //Sort he unvisited queue of nodes by shortest edges to each.
+        // The next node with the shortest edge is pushed at the front of the queue.
+        pqUnvisited.sortByShortestPath();
+        //Pop the queue to get the front node
+        ptrToCurrentNode = pqUnvisited.pop();
+        //If the graph is disconnected we must end the current loop inform the user that the graph is disconnected and does not contain a minimum spanning tree.
+        //We also set the valid flag on the MST to be false.
+        if (ptrToCurrentNode->shortestDistanceToCurrentNodeInPath == INFINITY)
+        {
+            cout << "Warning - There are still unvisited nodes but the graph is broken (incomplete)" << endl;
+            //Note that all MSTs are initialized with true as the isValid flag.
+            minimumSpanningTree.isValid = false;
+            break;
+        }
+        //Add the edge with the smallest cost of the current node.
+        minimumSpanningTree.addEdge(ptrToCurrentNode->ptrToEdgeWithShortestDistance);
+    }
+    //Return the current MST even if it is not valid.
+    return minimumSpanningTree;
+}
+
+
+///Constructors
+///Empty constructor to be used if we want to use the function to create a graph from matrix of edge lenghts. See description of Graph class.
+template <typename NodeType>
+Graph<NodeType>::Graph()
+{
+    _totalNodes=0;
+    _totalEdges=0;
+}
+///Warning this constructor only creates an empty _connectedNodesDirectedEdgePtrsMatrix with all null pointers. Use this construction only if user needs to create a graph manually. NOT recommended.
+template <typename NodeType>
+Graph<NodeType>::Graph(int totalNodes)
+{
+    _totalNodes=0;
+    _totalEdges=0;
+    //Initialize a vector of vector of doubles with both lenght = totalNodes with all 0
+    // in other words this creates a square matrix of size totalNodes full of 0 distance values to neighboor
+    _connectedNodesDirectedEdgePtrsMatrix = vector(totalNodes, vector<Edge<NodeType>*>(totalNodes));
+}
+
+// This constructor creates a graph of graphTotalNodes with random edge density between edgeDensityMin and edgeDensityMax
+//
+/// This constructor creates a graph of graphTotalNodes with random edge density between edgeDensityMin and edgeDensityMax and with random edge lenght between edgeLenghtMin and edgeLenghtMax
+template <typename NodeType>
+Graph<NodeType>::Graph(int graphTotalNodes, double edgeDensity, double edgeLenghtMin, double edgeLenghtMax)
+{
+    // This next instantiation is for creating a random graph and since the program can run through all its creation and evaluation within milliseconds, a more precise seed creator was needed.
+    struct timeval t1;
+    gettimeofday(&t1, NULL);
+    _srandSeed = (int)(t1.tv_usec * t1.tv_sec);
+    srand(_srandSeed);
+    // Create empty matrix of directed edges
+    _connectedNodesDirectedEdgePtrsMatrix = vector(graphTotalNodes, vector<Edge<NodeType>*>(graphTotalNodes));
+    
+    // For each row and column run through all the nodes as to and from nodes.
+    for(int rowIndex = 0; rowIndex < graphTotalNodes; rowIndex++)
+    {
+        NodeType * ptrToRowNode; // Data at [Row] are distance to the ID of the row itself and it's column node.
+        // If node does not exist in the graph create it.
+        if (!nodeExistInGraphNodeList(rowIndex))
+        {
+            // Add node to graph.
+            ptrToRowNode = addNode(rowIndex);
+        }
+        // If node exist retrieve it. (When one iteration of the row loop is done, all necessary nodes should have been created even if there is no edges between it and the current row node.
+        else
+        {
+            // Get node ptr from graph.
+            ptrToRowNode = _graphNodeList[rowIndex];
+        }
+        //Iterate through all the nodes as columns.
+        for(int colIndex = 0; colIndex < graphTotalNodes; colIndex++)
+        {
+            //Warning, here we only want to do the upper triangle of the edge matrix since the next code adds directed edges so we don't overide the existing edges.
+            if (rowIndex < colIndex)
+            {
+                // Create a ptr to record the node the edge will pointing at.
+                NodeType * ptrToConnectingNode;
+                //If the node does not already exist, add it to the graph.
+                if (!nodeExistInGraphNodeList(colIndex))
+                {
+                    ptrToConnectingNode = addNode(colIndex);
+                }
+                // If the node exist in the graph retrieve a ptr to it
+                else
+                {
+                    ptrToConnectingNode = _graphNodeList[colIndex];
+                }
+                // Here we create an undirected edge depending random value optain is with the edge density request by the function
+                // Remember : At the beginning of the function, the edge matrix of edge ptrs was instantiate with all nullptr
+                if (_createEdgeDependingOn(edgeDensity))
+                {
+                    // Add an undirected edge (as per requested in assignment.) with a random lenght/cost between the edgeLengthMin and edgeLenghtMax.
+                    addUndirectedEdge(*ptrToRowNode, *ptrToConnectingNode, _randomEdgeLenghtBetween(edgeLenghtMin, edgeLenghtMax));
+                    
+                }
+            }
+        }
+    }
+}
+
+// This constructor loads a graph from file where the first integer (must be first item in the file) is the size of the graph (total number of nodes) and all the next lines are integer triples where the first and second are nodes(forming an edge from first to second) with the third being the cost of this edge.
+template <typename NodeType>
+Graph<NodeType>::Graph(string inputFile)
+{
+    ifstream dataFile("data.txt");
+    
+    if (dataFile.fail())
+    {
+        cout << "Error -- File cannot be opened." << endl;
+    }
+    istream_iterator<int> start(dataFile), end;
+    vector<int> data(start, end);
+    _totalNodes = *data.begin();
+    int count = 1;
+    // Because we are provided with the number of edges, we can use this value to verify that the file and that our codes creates the correct number of edges.
+    for (auto iterator = data.begin()+1; iterator !=data.end(); iterator++)
+    {
+        NodeType * startNodePtr = nullptr;
+        NodeType * endNodePtr = nullptr;
+        
+        int startNodeID = * iterator;
+        
+        //if start node does not exist create it
+        if (!nodeExistInGraphNodeList(startNodeID))
+        {
+            startNodePtr = addNode(startNodeID);
+        }
+        else
+        {
+            startNodePtr = getNodePtr(startNodeID);
+            //cout << "NODE with ID: " << startNodeID << " already exist." << endl;
+        }
+        
+        int endNodeID = * ++iterator;
+        
+        //if end node does not exist create it.
+        if (!nodeExistInGraphNodeList(endNodeID))
+        {
+            endNodePtr = addNode(endNodeID);
+        }
+        else
+        {
+            endNodePtr = getNodePtr(endNodeID);
+            //cout << "NODE with ID: " << endNodeID << " already exist." << endl;
+        }
+        
+        int cost = * ++iterator;
+        //check if edge exist, if not create it.
+        if (!isEdge(*startNodePtr, *endNodePtr))
+        {
+            addUndirectedEdge(*startNodePtr, *endNodePtr, cost);
+        }
+        else
+        {
+            //cout << "An edge from nodeID: " << startNodeID << " to nodeID: " << endNodeID << " already exist." << endl;
+        }
+        
+        //            cout << "Line: " << count << " _________" << endl;
+        //            cout << "The start node: " << startNodeID << endl;
+        //            cout << "The end node: " << endNodeID << endl;
+        //            cout << "The cost: " << cost << endl;
+        //            cout << "--------------------------------" << endl;
+        count++;
+    }
+}
+
+//Deconstructor
+//Graph must release all nodes.
+template <typename NodeType>
+Graph<NodeType>::~Graph()
+{
+    cout << "The Graph Deconstructor was called." << endl;
+    for (auto nodePtr : _graphNodeList)
+    {
+        nodePtr = nullptr;
+        delete nodePtr;
+        _totalNodes--;
+        
+    }
+    for (auto edgePtr : _graphEdgeList)
+    {
+        edgePtr = nullptr;
+        delete edgePtr;
+        _totalEdges--;
+        
+    }
+    _graphEdgeList.clear();
+    _graphEdgeList.clear();
+}
+
+// function that return true if the node is valid from it's ID. Operates at O(1).
+template <typename NodeType>
+bool Graph<NodeType>::_isNodeValid(const int nodeID) const
+{
+    if (nodeID < _graphNodeList.size())
+    {
+        return true;
+    }
+    else
+    {
+        cout << "Node ID is NOT valid" << endl;
+        return false;
+    }
+}
+
+// private function to return a random lenght depending on a min and max lenght from random graph creation function.
+template <typename NodeType>
+double Graph<NodeType>::_randomEdgeLenghtBetween(double minLenght, double maxLenght)
+{
+    return minLenght + (double)rand() / (double)(RAND_MAX/(maxLenght-minLenght));
+}
+
+// private funtion that return true if the random generated value is within the edge density by random graph creation function.
+template <typename NodeType>
+bool Graph<NodeType>::_createEdgeDependingOn(double edgeDensity)
+{
+    double probToCreateEdge = (double)rand() / RAND_MAX;
+    if (probToCreateEdge <= edgeDensity)
+    {
+        return true;
+    }
+    return false;
+}
+
+// Helper function to print a matrix of node to node edge costs.
+// This function is outside the graph since a matrix of vector of vectors of doubles is created outside the graph.
+void printMatrix(vector<vector<double>> const &matrixOfNodeEdgeCosts)
+{
+    for (int rowIndex = 0; rowIndex < matrixOfNodeEdgeCosts.size()+1;rowIndex++)
+    {
+        if (rowIndex == 0)
+        {
+            cout << left << setw(10) << "NodeID";
+        }
+        if (rowIndex > 0)
+        {
+            if (rowIndex ==1)
+            {
+                cout <<  right << setw(6) << rowIndex-1 << " {";
+            }
+            else
+            {
+                cout <<  right << setw(6) << rowIndex-1 << "  ";
+            }
+            cout << "{ ";
+        }
+        
+        for (int columnIndex = 0; columnIndex < matrixOfNodeEdgeCosts.size()+1; columnIndex++) {
+            if (rowIndex == 0 && columnIndex > 0)
+            {
+                cout << left << setw(4) << columnIndex-1;
+            }
+            else if(rowIndex > 0 && columnIndex > 0)
+            {
+                cout <<  matrixOfNodeEdgeCosts[rowIndex-1][columnIndex-1] << setw(3);
+                if (columnIndex > 0 && columnIndex < matrixOfNodeEdgeCosts.size())
+                {
+                    cout << ",";
+                }
+            }
+            
+        }
+        if (rowIndex < matrixOfNodeEdgeCosts.size()+1)
+        {
+            if (rowIndex != 0)
+            {
+                cout << "}";
+            }
+            if (rowIndex != matrixOfNodeEdgeCosts.size())
+            {
+                cout << endl;
+            }
+        }
+    }
+    cout << "}" << endl;
+    cout << endl;
+}
+
+
+#endif /* Graph_h */
+
+//
+//  Path.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-25.
+//
+
+//Path is a template class for the typename NodeType. This was modified so that the templated Graph/Node/Edge classes can be modified later for each type of NodeType -> ex: Graph<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library.
+
+
+#ifndef Path_hpp
+#define Path_hpp
+
+#include <stdio.h>
+#include "Node.hpp"
+
+
+// The class path is for storing paths/shortest paths resulting from Dijkstra's algorithm.
+template <typename NodeType>
+class Path
+{
+public:
+    double totalDistance; // Records the total/current distance of the path.
+    
+    vector<Node<NodeType>*> nodesVector; // Records the nodes in order of the path recorded/traversed
+    
+    // Create a default constructor since a custom one was created bellow. The graph itself never uses the empty constructor.
+    //  It is used to create an empty path in the results to hold the shortest and longest paths of the iteration of averaging the shortest path algorithm.
+    Path();
+    
+    // Each path is instantiated by the Dijkstra's algoritm in the graph with a ptr to the start node and a starting cost/distance of 0.0
+    Path(Node<NodeType> * ptrToStartNode);
+    
+    // Public function for Adding a node ptr to the path
+    void addNode(Node<NodeType> * ptrToNewNode);
+    
+    // Helper function to see the results visually to the console.
+    void print();
+};
+
+using namespace std;
+template <typename NodeType>
+Path<NodeType>::Path(){};
+
+// Each path is instantiated by the Dijkstra's algoritm in the graph with a ptr to the start node and a starting cost/distance of 0.0
+template <typename NodeType>
+Path<NodeType>::Path(Node<NodeType> * ptrToStartNode):totalDistance(0.0)
+{
+    nodesVector.push_back(ptrToStartNode);
+}
+
+// Public function for Adding a node ptr to the path
+template <typename NodeType>
+void Path<NodeType>::addNode(Node<NodeType> * ptrToNewNode)
+{
+    nodesVector.push_back(ptrToNewNode);
+    //The total is recorded in the last node. This next line rewrites the total cost going through all nodes in path.
+    totalDistance = ptrToNewNode->shortestDistanceToCurrentNodeInPath;
+}
+
+// Helper function to see the results visually to the console.
+template <typename NodeType>
+void Path<NodeType>::print()
+{
+    cout << "From start node " << nodesVector[0]->nodeID << " to End node " << nodesVector[nodesVector.size()-1]->nodeID << " :" << endl;
+    double totalPathCost = 0.0;
+    int nodeCount = 0;
+    cout << "  " << setw(3);
+    for(Node<NodeType> * nodePtr : nodesVector)
+    {
+        cout << right << nodePtr->nodeID  << setw(2);
+        if (nodeCount != nodesVector.size()-1)
+        {
+            cout << "->" << left << setw(2);
+        }
+        if ((nodeCount+1) % 20 == 0)
+        {
+            cout << endl;
+            cout << "" << setw(3);
+        }
+        
+        
+        //The total is recorded in the last node. This next line rewrites the total cost going through all nodes in path.
+        totalPathCost = nodePtr->shortestDistanceToCurrentNodeInPath;
+        nodeCount++;
+    }
+    cout << endl;
+    cout << "Total Path Cost: " << totalPathCost << endl;
+    cout << endl;
+}
+
+#endif /* Path_hpp */
+
+//
+//  PriorityQueue.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-25.
+//
+
+//PriorityQueue is a template class for the typename NodeType. This was modified so that Graph/Node/Edge classes can be modified later for each type of NodeType -> Graph<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library.
+
+#ifndef PriorityQueue_hpp
+#define PriorityQueue_hpp
+
+#include <stdio.h>
+#include <string>
+
+//Bellow class is forwarded
+template<typename NodeType>
+class Node;
+
+using namespace std;
+
+// PriorityQueue class is used to contained the labeled/visited nodes and the unlabeled/unvisited nodes.
+// The queue only holds pointers to the nodes to prevent high amounts of data being copied if nodes ever carry more data.
+template <typename NodeType>
+class PriorityQueue
+{
+public:
+    // The default constructor here is overidden with making sure that the queue does not have a nullptr, this is to facilitate
+    //  branching and program pathing
+    PriorityQueue();
+    // Public function to sort queue by nodePtr->shortestDistanceToCurrentNodeInPath
+    void sortByShortestPath();
+    
+    // Public function to access local members and prevent unwanted use.
+    // Returns a node ptr that cannot be changed by caller.
+    const vector<NodeType*> getNodesInQueue() const;
+    
+    NodeType * pop();
+    
+    // Checks is a node is part of the queue.
+    bool nodeExist(NodeType* nodePtr);
+    
+    // Adds a node to the queue.
+    void addNode(NodeType* ptrToNode);
+    
+    // Function to add a bunch of nodes through a vector of ptrs to nodes.
+    void addVectorOfNodes(vector<NodeType*> neighboringNodes);
+    
+    // This function returns the next node ptr in the front of the queue WITHOUT deleting it.
+    NodeType * getNextNode();
+    
+    // This function removes a node ptr in the queue at any location in the queue and returns nothing.
+    // Please note that this function will run in O(degre of Nodes) because it has to update each nodes location when it deletes it.
+    void removeNode(NodeType * nodePtr);
+    
+    // Returns true if the queue is empty
+    bool empty();
+    
+    // Helper function to visualy see a queue's contents
+    void print(string nameOfQueue);
+    // The vector<Node *> is accessible only by public functions.
+    vector<NodeType*> * _ptrToPriorityQueue;
+    
+};
+
+// The default constructor here is overidden with making sure that the queue does not have a nullptr, this is to facilitate
+//  branching and program pathing
+template <typename NodeType>
+PriorityQueue<NodeType>::PriorityQueue()
+{
+    _ptrToPriorityQueue = new vector<NodeType*>;
+}
+// Public function to sort queue by nodePtr->shortestDistanceToCurrentNodeInPath
+
+template <typename NodeType>
+void PriorityQueue<NodeType>::sortByShortestPath()
+{
+    sort(_ptrToPriorityQueue->begin(),_ptrToPriorityQueue->end(), [](const Node<NodeType> * lhs, const Node<NodeType> * rhs){
+        return lhs->shortestDistanceToCurrentNodeInPath < rhs->shortestDistanceToCurrentNodeInPath;
+    });
+}
+
+// Public function to access local members and prevent unwanted use.
+// Returns a node ptr that cannot be changed by caller.
+template <typename NodeType>
+const vector<NodeType*> PriorityQueue<NodeType>::getNodesInQueue() const
+{
+    return *_ptrToPriorityQueue;
+}
+
+template <typename NodeType>
+NodeType* PriorityQueue<NodeType>::pop()
+{
+    NodeType * nodePtr = *_ptrToPriorityQueue->begin();
+    _ptrToPriorityQueue->erase(_ptrToPriorityQueue->begin());
+    return nodePtr;
+}
+
+// Checks is a node is part of the queue.
+template <typename NodeType>
+bool PriorityQueue<NodeType>::nodeExist(NodeType * nodePtr)
+{
+    for(int index=0 ; index < _ptrToPriorityQueue->size() ; index++)
+    {
+        if((*_ptrToPriorityQueue)[index]->nodeID == nodePtr->nodeID)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Adds a node to the queue.
+template <typename NodeType>
+void PriorityQueue<NodeType>::addNode(NodeType * ptrToNode)
+{
+    _ptrToPriorityQueue->push_back(ptrToNode);
+    // Set the node's memoization of its location in the queue. In future version of program, this could be done with an Hashtable without adding to much cost in O(times)
+    ptrToNode->indexOfNodeInUnvistedQueue = int(_ptrToPriorityQueue->size()-1);
+}
+
+// Function to add a bunch of nodes through a vector of ptrs to nodes.
+template <typename NodeType>
+void PriorityQueue<NodeType>::addVectorOfNodes(vector<NodeType*> neighboringNodes)
+{
+    for (NodeType * eachNode : neighboringNodes)
+    {
+        _ptrToPriorityQueue->push_back(eachNode);
+        eachNode->indexOfNodeInUnvistedQueue = int(_ptrToPriorityQueue->size()-1);
+    }
+}
+
+// This function returns the next node ptr in the front of the queue WITHOUT deleting it.
+template <typename NodeType>
+NodeType* PriorityQueue<NodeType>::getNextNode()
+{
+    return _ptrToPriorityQueue->front();
+}
+
+// This function removes a node ptr in the queue at any location in the queue and returns nothing.
+// Please note that this function will run in O(degre of Nodes) because it has to update each nodes location when it deletes it.
+template <typename NodeType>
+void PriorityQueue<NodeType>::removeNode(NodeType* nodePtr)
+{
+    int nodeIDtoRemove = nodePtr->indexOfNodeInUnvistedQueue;
+    *_ptrToPriorityQueue->erase(_ptrToPriorityQueue->begin()+nodeIDtoRemove);
+    for (Node<NodeType> * ptrNode : vector<Node<NodeType>*>(_ptrToPriorityQueue->begin()+nodeIDtoRemove,_ptrToPriorityQueue->end()))
+    {
+        ptrNode->indexOfNodeInUnvistedQueue -= 1;
+    }
+}
+
+// Returns true if the queue is empty
+template <typename NodeType>
+bool PriorityQueue<NodeType>::empty()
+{
+    return _ptrToPriorityQueue->empty();
+}
+
+// Helper function to visualy see a queue's contents
+template <typename NodeType>
+void PriorityQueue<NodeType>::print(string nameOfQueue)
+{
+    cout << endl;
+    cout << nameOfQueue << " queue: (front of queue is on the left)" << endl;
+    for(Node<NodeType> * nodePtr : *_ptrToPriorityQueue)
+    {
+        cout << nodePtr->nodeID << "=" << nodePtr->shortestDistanceToCurrentNodeInPath << ", ";
+    }
+    cout << endl;
+}
+
+#endif /* PriorityQueue_hpp */
+
+//
+//  MST.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-25.
+//
+
+//MST is a template class for the typename NodeType. This was modified so that Graph/Node/Edge can be modified later for each type of NodeType -> Graph<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library.
+
+#ifndef MST_hpp
+#define MST_hpp
+
+#include <stdio.h>
+#include <iostream>
+
+using namespace std;
+
+//Minimum spanning tree. "As a collection of edges"
+template<typename NodeType>
+class MST
+{
+public:
+    bool isValid; // This is a flag to know if the minimum spanning tree created is valid and used all nodes in the graph.
+    void addEdge(Edge<NodeType>* ptrToEdge);
+    
+    bool nodeExist(int nodeID);
+    
+    //Helper function to see the MST on the console
+    void print();
+    //Constructor takes care of empty constructor also by setting isValid default to true.
+    MST(bool isValid = true);
+private:
+    vector<Edge<NodeType>*> _edges; // hidden vector of edges for the MST
+};
+
+template <typename NodeType>
+void MST<NodeType>::addEdge(Edge<NodeType>* ptrToEdge)
+{
+    _edges.push_back(ptrToEdge);
+}
+
+//Helper function to help find if a certain node exist using the nodeID.
+template <typename NodeType>
+bool MST<NodeType>::nodeExist(int nodeID)
+{
+    for (Edge<NodeType>* edgePtr : _edges)
+    {
+        if (edgePtr->fromNodeID==nodeID || edgePtr->toNodeID==nodeID)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+//Helper function to see the MST on the console
+template <typename NodeType>
+void MST<NodeType>::print()
+{
+    //Print the tree to the console if it is valid
+    if (this->isValid)
+    {
+        int totalWeightOfTree =0;
+        cout << "~";
+        for (auto edge : _edges)
+        {
+            cout << "Edge " << edge->fromNodePtr->nodeID << "<->" << edge->toNodePtr->nodeID << "(" << edge->cost << "), ";
+            totalWeightOfTree += edge->cost;
+        }
+        cout << endl;
+        cout << "The total edge cost is: " << totalWeightOfTree << endl;
+    }
+    else
+    {
+        cout << "THE GRAPH IS UNCONNECTED AND DOES NOT HAVE A MINIMUM SPANNING TREE." << endl;
+    }
+}
+
+//Constructor takes care of empty constructor also by setting isValid default to true.
+template <typename NodeType>
+MST<NodeType>::MST(bool isValid):isValid(isValid){}
+
+
+#endif /* MST_hpp */
+
+//
+//  HexNode.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-02-01.
+//
+
+//HexNode is a template class for the typename NodeType. This was modified so that Node can be modified later for each type of NodeType -> Node<NodeType>, in other words, the Node<NodeType> can be subclassed in a new NodeType that has extra data. This is to recreate the functionallity like a vector<Type> from the standard template library. Here it is used to add a variable named "state" in the Node<HexNode> see bellow.
+
+#ifndef HexNode_hpp
+#define HexNode_hpp
+
+#include <stdio.h>
+//If the object of the bellow class must be instantiated here in this template they must also have their file included here.
+#include "Node.hpp"
+
+//Bellow class is forwarded
+template<typename HexNode>
+class Edge;
+
+//Enum to mark a square as owned by Blue, Red or Unoccupied.
+enum class HexNodeState
+{
+    UNOCCUPIED, RED, BLUE
+};
+
+//Definition, Implementation, Super Class of Node<NodeType>
+class HexNode: public Node<HexNode>
+{
+public:
+    //Set the node state to default to Unoccupied.
+    HexNodeState state = HexNodeState::UNOCCUPIED;
+    HexNode(int nodeName=0);
+private:
+    
+};
+
+
+
+//IMPLEMENTATION
+HexNode::HexNode(int nodeName): Node<HexNode>{nodeName} {
+    ptrToVectorDirectedEdges = new vector<Edge<HexNode>*>;
+};
+
+#endif /* HexNode_hpp */
+
+//
+//  HexGameGraph.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-26.
+//
+
+#ifndef HexGameGraph_hpp
+#define HexGameGraph_hpp
+
+#include <stdio.h>
+#include "Graph.hpp"
+#include "Path.hpp"
+#include "PriorityQueue.hpp"
+#include "HexNode.hpp"
+#include "MST.hpp"
+
+class HexGameGraph : public Graph<HexNode>
+{
+public:
+    HexGameGraph(int gameSize=5):Graph<HexNode>{gameSize*gameSize}{};
+    //HexNode * getNodePtr(int nodeID);
+    //HexNode * addNode(int nodeID);
+    friend class HexGame;
+    //vector<HexNode*> _graphNodeList;
+//    HexNode* addNode(int nodeID);
+//    HexNode* getNodePtr(int nodeID);
+private:
+    MST<HexNode>* getMinimumSpanningTreePRIM(int startingNodeID, HexNodeState state);
+    Path<HexNode> * _getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState);
+    
+};
+
+//--------------------   Added getMinimumSpanningTree function for assignment 4.
+//Function that returns the minimum spanning tree for the graph using PRIM's algorithm
+MST<HexNode>* HexGameGraph::getMinimumSpanningTreePRIM(int startingNodeID, HexNodeState state)
+{
+    //Create the tree
+    MST<HexNode>* minimumSpanningTree = new MST<HexNode>(true);
+    //Create a priority queue for all unvisited nodes
+    PriorityQueue<HexNode> pqUnvisited;
+    //Arbitraly choose the starting node
+    HexNode* ptrToCurrentNode = getNodePtr(startingNodeID);
+    
+    //Reset shortestDistance of each Node to infinity
+    for (HexNode* nodePtr : _graphNodeList)
+    {
+        nodePtr->shortestDistanceToCurrentNodeInPath = INFINITY;
+        //Do not include the starting node in the unvisited nodes, saves on more work later
+        //Modification that is different from base Graph function to only add node of correct state
+        if (nodePtr->nodeID != startingNodeID && nodePtr->state == state)
+        {
+            pqUnvisited.addNode(nodePtr);
+        }
+    }
+    //Set starting node's shortest distance to 0.
+    ptrToCurrentNode->shortestDistanceToCurrentNodeInPath = 0;
+    
+    //Repeat until the unvisited node queue is empty or the graph is not connected.
+    while (!pqUnvisited.empty())
+    {
+        //Iterate through the neighbors of the current node and updates it's shortest distance to it.
+        vector<HexNode*> vectorOfPtrsToCurrentNodesNeigbors = *(ptrToCurrentNode->ptrToVectorOfNeighborPtrs);
+        for (auto currentNeighborPtr : vectorOfPtrsToCurrentNodesNeigbors )
+        {
+            //Modification that is different from base Graph function to only add node of correct state
+            if (currentNeighborPtr->state == state)
+            {
+                int costToCurrentNeighbor = getEdgeLenght(ptrToCurrentNode, currentNeighborPtr);
+                //If the current edge cost to the current neighbor is less then previous cost then store this value as the new shortestDistance...
+                //Make sure to record the short edge to get to the current neighbor
+                if (costToCurrentNeighbor < currentNeighborPtr->shortestDistanceToCurrentNodeInPath)
+                {
+                    currentNeighborPtr->shortestDistanceToCurrentNodeInPath = costToCurrentNeighbor;
+                    //Record the shortest edge of the current neighboor
+                    currentNeighborPtr->ptrToEdgeWithShortestDistance = getEdgePtr(*ptrToCurrentNode, *currentNeighborPtr);
+                }
+            }
+        }
+        //Sort he unvisited queue of nodes by shortest edges to each.
+        // The next node with the shortest edge is pushed at the front of the queue.
+        pqUnvisited.sortByShortestPath();
+        //Pop the queue to get the front node
+        ptrToCurrentNode = pqUnvisited.pop();
+        //If the graph is disconnected we must end the current loop inform the user that the graph is disconnected and does not contain a minimum spanning tree.
+        //We also set the valid flag on the MST to be false.
+        if (ptrToCurrentNode->shortestDistanceToCurrentNodeInPath == INFINITY)
+        {
+            cout << "Warning - There are still unvisited nodes but the graph is broken (incomplete)" << endl;
+            //Note that all MSTs are initialized with true as the isValid flag.
+            minimumSpanningTree->isValid = false;
+            break;
+        }
+        //Add the edge with the smallest cost of the current node.
+        //Modification that is different from base Graph function to only add node of correct state
+        assert(ptrToCurrentNode->state == state);
+        minimumSpanningTree->addEdge(ptrToCurrentNode->ptrToEdgeWithShortestDistance);
+    }
+    //Return the current MST even if it is not valid.
+    return minimumSpanningTree;
+}
+
+Path<HexNode> * HexGameGraph::_getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState)
+{
+    // My class Path is a vector of nodes and only assigns starting node when initializing with
+    // 0.0 as it's Node.shortestDistanceToCurrentNodeInPath as a double.
+    if (!_graphNodeList.empty())
+    {
+        // Next for loop is necessary evil until shortest distance is ported to Path as it should.
+        for (auto* nodePtr : _graphNodeList)
+        {
+            //HexNode* hexNodePtr = static_cast<HexNode*>(nodePtr);
+            nodePtr->shortestDistanceToCurrentNodeInPath = Infinity;
+        }
+        // create a Path with the first node
+        Path<HexNode> * shortestVisitedPath = new Path<HexNode>(ptrToStartNode);
+        // We set the paths starting distance as good coding since the Path class does that automatically when adding the start node.
+        shortestVisitedPath->totalDistance = 0.0;
+        // Ptr to node currently being evaluated during the next loop
+        
+        HexNode * ptrToCurrentNode;
+        // Ptr to shortest node currently being evaluated in the "Neighboring" nodes loop.
+        HexNode * ptrToShortestEdgeNode = nullptr;
+        
+        // Create new queue for unvisited nodes
+        PriorityQueue<HexNode> unvisitedQueue;
+        // Create new priority queue called pQ for visited nodes.
+        PriorityQueue<HexNode> pQ;
+        
+        
+        // add all nodes to unvisited PriorityQueue
+        for(auto* nodePtr : _graphNodeList)
+        {
+            if (nodePtr->state == nodeState)
+            {
+                unvisitedQueue.addNode(nodePtr);
+            }
+        }
+        // Remove the start node from the unvisited queue.
+        unvisitedQueue.removeNode(ptrToStartNode);
+        // Add the start node to the visited queue
+        pQ.addNode(ptrToStartNode);
+        // Set the currently evaluated node ptr to the start node.
+        ptrToCurrentNode = ptrToStartNode;
+        // Make sure it's shortest distance to it for the path is 0.0 THis is redundant again but good practice.
+        ptrToCurrentNode->shortestDistanceToCurrentNodeInPath = 0.0;
+        
+        //Start loop here
+        int iterationCount = 0; // iteration counter
+        while (!unvisitedQueue.empty())
+        {
+            // Set the current shortest edge for the loop of ptr to neighbor nodes.
+            double currentShortestEdge = Infinity;
+            // Get a vector with the pointers of neighboring nodes of the current node
+            vector<HexNode*>* vectorOfPtrsToCurrentNodesNeigbors = ptrToCurrentNode->ptrToVectorOfNeighborPtrs;
+            // If there is neighboring nodes then continue, else the path is unconnected with the next nodes from starting node see else for what happens next if this is the case.
+            if (vectorOfPtrsToCurrentNodesNeigbors->size() > 0)
+            {
+                // Run through all the neighbor nodes and record to evaluate each of them
+                for (HexNode* currentNeighborPtr : *vectorOfPtrsToCurrentNodesNeigbors)
+                {
+                    // If the node exist in the in the unvisted queue (here we could also use if it's not in visited queue) and updates it
+                    if (currentNeighborPtr->state == nodeState){
+                        if (unvisitedQueue.nodeExist(currentNeighborPtr))
+                        {
+                            // Get the edge length/cost between current node and its current neighboor
+                            double edgeLengthCurrentToNeighbor = getEdgeLenght(ptrToCurrentNode, currentNeighborPtr);
+                            
+                            // Update the shortest distance to current neighbor or current to distance from current node (edgeLengtCurrentToNeighbor) + the previous node's(here we used the current node since the previous of the current neighbor is the current node) shortest distance
+                            if (edgeLengthCurrentToNeighbor < currentNeighborPtr->shortestDistanceToCurrentNodeInPath)
+                            {
+                                (currentNeighborPtr->shortestDistanceToCurrentNodeInPath) = ptrToCurrentNode->shortestDistanceToCurrentNodeInPath + edgeLengthCurrentToNeighbor;
+                            }
+                            
+                            // If the currentNeighbor's distance is less then the current shortest edge, then set the currentShortestEdge to edge of the current neighbor as well as ptr to shortest edge node to current neighbor node.
+                            if (edgeLengthCurrentToNeighbor < currentShortestEdge)
+                            {
+                                currentShortestEdge = edgeLengthCurrentToNeighbor;
+                                ptrToShortestEdgeNode = currentNeighborPtr;
+                            }
+                        }
+                    }
+                }
+                
+                //Warning if the shortest edge node is the same ptr as the ptrToCurrent node, then the graph is unconnected and the last node did not have any neighbors left in the queue. Or in the case of the startNode, this pointer will still be nullptr.
+                if (ptrToCurrentNode == ptrToShortestEdgeNode || ptrToShortestEdgeNode == NULL)
+                {
+                    // Set the current node to previous node
+                    HexNode * ptrToPreviousNode = ptrToCurrentNode;
+                    // We get the next current node from the unvisited queue. Order does not really matter here.
+                    ptrToCurrentNode = (unvisitedQueue.getNextNode());
+                    // Remove this current node from the unvisited queue.
+                    unvisitedQueue.removeNode(ptrToCurrentNode);
+                    //FIXME: This work is not required for homework but should be fixed to do store the node in a disconnected set
+                    // If the next node is still the same then pop it off the unvisited Q
+                    // We have to evaluate this just in case that the new node from the unvisited queue
+                    //  happens to be shortest edge neighbor node to the previous node (previous to current node)
+                    //  which was not removed from the stack since it's previous node has no neighboor.
+                    //  Note, after changing the order of this and bellow "if" statements, this does not seem to
+                    //  hapen anymore and maybe redundant.
+                    if (ptrToCurrentNode == ptrToPreviousNode)
+                    {
+                        //cout << "WARNING - The graph is disconnected from node " << ptrToCurrentNode->nodeID << endl;
+                        ptrToCurrentNode = (unvisitedQueue.getNextNode());
+                    }
+                    //Set the ptr to shortest edge node to nullptr for next iteration of the current loop.
+                    ptrToShortestEdgeNode = nullptr;
+                    // If the univisted queue is empty or the ptrToCurrentNode is a nullptr, exit the function and
+                    // return the current path as the current shortest path. This returns the current "CONNECTED" shortest
+                    // path.
+                    if (unvisitedQueue.empty() || ptrToCurrentNode == nullptr)
+                    {
+                        return shortestVisitedPath;
+                    }
+                    iterationCount++;
+                    //Exit current loop early
+                    continue;
+                }
+                else
+                {
+                    cout << "---- THE GRAPH IS UNCONNECTED ----" << endl;
+                    return NULL;
+                }
+                // Add the ptr to shortest edge node of the neighbor to the shortest path.
+                shortestVisitedPath->addNode(ptrToShortestEdgeNode);
+                // Remove the ptr to shortes edge node from the unvisted queue
+                unvisitedQueue.removeNode(ptrToShortestEdgeNode);
+                // Add this pointer to visited queue
+                pQ.addNode(ptrToShortestEdgeNode);
+                // Set the next current node to the current shortest edge node.
+                ptrToCurrentNode = ptrToShortestEdgeNode;
+            }
+            // If the case fails, set ptr to current node to the next node on the unvisited queue.
+            //  which one is chosen is not important and does not matter
+            else
+            {
+                ptrToCurrentNode = (unvisitedQueue.getNextNode());
+                // Set the ptr to shortest edgenode to nullptr. Done for good pratice.
+                ptrToShortestEdgeNode = nullptr;
+            }
+            
+            // If we discover that ptr to current node is the same a the ptrToEnd node, exit the shortest path function and return the current shortest path, we have arrived at destination.
+            if(ptrToEndNode != nullptr && ptrToCurrentNode->nodeID == ptrToEndNode->nodeID)
+            {
+                return shortestVisitedPath;
+            }
+            // If our ptr to current node has not been set to next node or has been set to nullptr, exit shortest path function and return the current shortest path, there are no more nodes left in the unvisited queue.
+            if (ptrToCurrentNode == nullptr)
+            {
+                return shortestVisitedPath;
+            }
+            iterationCount++;
+        }
+        return shortestVisitedPath;
+    }
+    return NULL;
+}
+
+//HexNode* HexGameGraph::addNode(int nodeID)
+//{
+//    HexNode* newHexNodePtr = new HexNode(nodeID);
+//    _graphNodeList.push_back(newHexNodePtr);
+//    return newHexNodePtr;
+//}
+//HexNode * HexGameGraph::getNodePtr(int nodeID)
+//{
+//    return _graphNodeList[nodeID];
+//}
+
+//HexNode * HexGameGraph::getNodePtr(int nodeID)
+//{
+//    return _graphNodeList[nodeID];
+//}
+//HexNode * HexGameGraph::addNode(int nodeID)
+//{
+//    HexNode * newNodePtr = new HexNode(nodeID);
+//    _graphNodeList.push_back(newNodePtr);
+//    newNodePtr->indexOfNodeInGraphVectorOfNodes = int(_graphNodeList.size()-1);
+//
+//    _totalNodes++;
+//    return newNodePtr;
+//}
+
+#endif /* HexGameGraph_hpp */
+
+//
+//  HexGame.hpp
+//  Part B - Assignment 4 - Hex Game
+//
+//  Created then Modified by Patrick Miron on 2022-01-25.
+//
+
+#ifndef HexGame_hpp
+#define HexGame_hpp
+
+#include <stdio.h>
+#include <tuple>
+#include "HexGameGraph.hpp"
+
+//Having transformed all graph, node, edge, mst, priority_queue, it was necessary to put all implementation of those classes into the .hpp "header" file since they are created during compile time and not instantiated until needed.
+//HexGame was also created the same way to keep it the same as the whole project.
+class HexGame
+{
+public:
+    bool isActive;
+    int gameSize;
+    //Start a game
+    HexGame(int gameSize = 5);
+    ~HexGame();
+private:
+    HexGameGraph * _gameGraphPtr;
+    void _startGameLoop();
+    bool _verifyCoordinates(int row, int col);
+    bool _isGameSquareOccupied(int row, int col);
+    HexNode * _askPlayerForCoordinates(int playerID);
+    bool _checkIfPlayerHasWon(int playerID, HexNode * nodePtr);
+    void _playerHasWon(int playerID);
+    int _getNodeIDFromCoordinates(int row,int col);
+    void _printGameBoard();
+    void _printTitle();
+    tuple<int, int> _getCoordinatesFromNodeID(int nodeID);
+};
+
+using namespace std;
+
+//IMPLEMENTATION
+//Default constructor
+HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
+{
+    //Start a game
+    //Implement game using a graph from assignment 3
+    //All graph classes from assignment 3 have been transform to template classes.
+    _gameGraphPtr = new HexGameGraph(gameSize);
+    
+    //Create a new unordered map to hold the game squares coordinates to NodeID of size gameSize*gameSize.
+    //Create all nodes in the graph and add their coordinates to the unordered map.
+    //For example, for a 6x6 graph, this will create 36 nodes from node 0 to node 35.
+    int index = 0;
+    for (int rowIndex = 0;rowIndex<gameSize;rowIndex++)
+    {
+        for (int columnIndex=0;columnIndex<gameSize;columnIndex++)
+        {
+            _gameGraphPtr->addNode(index);
+            HexNode * ptrToNode = _gameGraphPtr->getNodePtr(index);
+            
+            ptrToNode->state = HexNodeState::UNOCCUPIED;
+            index++;
+        }
+    }
+    //Node pointers that will be reused to create edges between them to create game board.
+    HexNode * fromNodePtr = _gameGraphPtr->getNodePtr(0);
+    HexNode * toNodePtr = _gameGraphPtr->getNodePtr(1);
+    //Add nodes to graphs for specified gameSize
+    // each square needs to add an edge to the square to right diagonally up, straigth right and right diagonally down to each other. The other side will be taken care by previous node.
+    for (int rowIndex=0;rowIndex<gameSize;rowIndex++)
+    {
+        for (int columnIndex=0;columnIndex<gameSize;columnIndex++)
+        {
+            //Create top row
+            if (rowIndex==0)
+            {
+                if (columnIndex==0)
+                {
+                    //Create a game square with 2 edges (top left corner)
+                    //EDGE 1
+                    //cout << _getNodeIDFromCoordinates(rowIndex,columnIndex) << endl;
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex)) ;
+                    //cout << _getNodeIDFromCoordinates(rowIndex,columnIndex+1) << endl;
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    
+                    //EDGE 2
+                    //cout << _getNodeIDFromCoordinates(rowIndex+1,columnIndex) << endl;
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex)) ;
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    
+                }
+                else if (columnIndex==gameSize-1)
+                {
+                    //create a game square with 3 edges (top right corner), 2 edge are already created by previous nodes.
+                    //EDGE 1
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    
+                }
+                else
+                {
+                    //create a game square with 4 edges. (first row of squares without corners), 3 edge are already created by previous nodes
+                    //EDGE 1
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    //EDGE 2
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                }
+            }
+            //Create bottom row
+            else if (rowIndex==gameSize-1)
+            {
+                if (columnIndex==0)
+                {
+                    //Create a game square with 3 edges (bottom left corner), 1 edge already created by previous node
+                    //EDGE 1
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex-1, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    //EDGE 2
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                }
+                else if (columnIndex==gameSize-1)
+                {
+                    //create a game square with 2 edges (bottom right corner)
+                    //All edges have been created by previous nodes.
+                }
+                else
+                {
+                    //create a game square with 4 edges. (bottom row of squares without corners), 2 edges have already been created by previous nodes.
+                    //EDGE 1
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex-1, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    //EDGE 2
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                }
+            }
+            //Create middle rows
+            else
+            {
+                //Create end of row game square with 4 edges,3 already have been created by previous nodes.
+                if (columnIndex==gameSize-1)
+                {
+                    //EDGE 1
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                }
+                //Create all other squares that have 6 edges, 3 edges already been created by previous nodes.
+                else
+                {
+                    //EDGE 1
+                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex-1, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    //EDGE 2
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                    //EDGE 3
+                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
+                }
+            }
+        }
+    }
+    //Clean up temporary pointers and start game loop.
+    fromNodePtr = nullptr;
+    toNodePtr = nullptr;
+    delete fromNodePtr;
+    delete toNodePtr;
+    _startGameLoop();
+}
+
+//Game Loop
+void HexGame::_startGameLoop()
+{
+    bool gameOver = false;
+    //PRINT HEX BOARD
+    _printGameBoard();
+    int numberHumanOfPlayers;
+    cout << "Please enter \"1\" if you want to play single player or \"2\" for a hot seat two player game of Hex. :";
+    cin >> numberHumanOfPlayers;
+    //Loop while the game is not over.
+    while (!gameOver)
+    {
+        //Ask first player move
+        HexNode * nodePtr = _askPlayerForCoordinates(1);
+        nodePtr->state = HexNodeState::RED;
+        _printGameBoard();
+        
+        if (_checkIfPlayerHasWon(1, nodePtr))
+        {
+            _playerHasWon(1);
+            gameOver = true;
+            break;
+        }
+        //If playing hot seat 2 player game, ask 2nd player to enter move
+        if (numberHumanOfPlayers == 2)
+        {
+            nodePtr = _askPlayerForCoordinates(2);
+            nodePtr->state = HexNodeState::BLUE;
+        }
+        _printGameBoard();
+        //Here player 2 is either human or the computer, so we only check once.
+        if (_checkIfPlayerHasWon(2, nodePtr))
+        {
+            _playerHasWon(2);
+            gameOver = true;
+            break;
+        }
+    }
+}
+
+//Helper function to check if a player has won after each move. Since a player can only win on his last move, we don't have to check if there's a route without this last move.
+bool HexGame::_checkIfPlayerHasWon(int playerID, HexNode * nodePtr)
+{
+    //Check from current move if there is a path to other side of the board.
+    if (playerID == 1)
+    {
+        //RED PLAYER Check from nodePtr to any Northern most squares (row 0) and if there is a path check from nodePtr to any South most squares (row gameSize-1) ;
+        
+        //Get minimum spaning tree from last square entered and check that it has both a node NorternMost Square and a SouthernMost node;
+        MST<HexNode>* mst = _gameGraphPtr->getMinimumSpanningTreePRIM(nodePtr->nodeID, nodePtr->state);
+        //Find if MST includes any of NorthernMost squares
+        for (int columnIndex=0; columnIndex < gameSize; columnIndex++)
+        {
+            //We check to see if there is a minimum spanning tree from current move to any boarder square at top and if so we then check if there is a minimum spanning tree from current move to the bottom board squares.
+            if (mst->nodeExist(_getNodeIDFromCoordinates(0, columnIndex)))
+            {
+                //A MST exist to a top board square, now test for a MST to bottom boarder squares
+                for (int columnIndex=0; columnIndex < gameSize; columnIndex++)
+                {
+                    //We only return true if there is also a MST from current square played to top and botom boarders.
+                    if(mst->nodeExist(_getNodeIDFromCoordinates(gameSize-1, columnIndex)))
+                    {
+                        //We could get the shortestPath algorithm to return the wining path and highlight all the winning squares on the board here.
+                        return true;
+                        
+                    }
+                }
+            }
+        }
+    }
+    //Here the test for player 2 is the same as player 1 except that we check for an MST to East boarder and West boarder
+    else
+    {
+        //BLUE PLAYER Check from nodePtr to any Northern most squares (row 0) and if there is a path check from nodePtr to any South most squares (row gameSize-1) ;
+        //Get minimum spaning tree from last square entered and check that it has both a node NorternMost Square and a SouthernMost node;
+        MST<HexNode>* mst = _gameGraphPtr->getMinimumSpanningTreePRIM(nodePtr->nodeID, nodePtr->state);
+        //Find if MST includes any of NorthernMost squares
+        for (int rowIndex=0; rowIndex < gameSize; rowIndex++)
+        {
+            //Check form current square played to East boarder squares
+            if (mst->nodeExist(_getNodeIDFromCoordinates(rowIndex, 0)))
+            {
+                for (int rowIndex=0; rowIndex < gameSize; rowIndex++)
+                {
+                    //Only If we have an MST from current square move to both side of the boarders we return true.
+                    if(mst->nodeExist(_getNodeIDFromCoordinates(rowIndex, gameSize-1)))
+                    {
+                        //We could get the shortestPath algorithm to return the wining path and highlight all the winning squares on the board here.
+                        return true;
+                        
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+//Indicate to the console which player has wone.
+void HexGame::_playerHasWon(int playerID)
+{
+    cout << "Congratulations, Player " << playerID << " you have won the game!" << endl;
+    cout << "Good luck next time, Player "  << playerID << " !" << endl;
+}
+
+//Helper function to ask the current player the coordinates they want to move a token to.
+HexNode * HexGame::_askPlayerForCoordinates(int playerID)
+{
+    //Initialize row and column to -1 because 0 in this case would be a valid choice
+    int rowIndex=-1, columnIndex=-1;
+    //Initialize bool variable a default values.
+    bool coordinatesAreValid = false;
+    bool gameSquareOccupied = false;
+    //Initialize the color string variable to "None". We will never see the default value on the screen, this is just for arbitrary debugging.
+    string playerColor("None");
+    //player 1 is always Red and player 2 is alway Blue.
+    if (playerID == 1)
+    {
+        playerColor = "RED";
+    }
+    else
+    {
+        playerColor = "BLUE";
+    }
+    cout << endl;
+    //Prompt user for info.
+    cout << "Player " << playerID << " : " << "(" << playerColor << ")" << endl;
+    cout << " Please enter coordinates for your next move." << endl;
+    cout << "row #: ";
+    cin >> rowIndex;
+    cout << endl;
+    cout << "column #: ";
+    cin >> columnIndex;
+    cout << "Verifying if (" << rowIndex << ", " << columnIndex << ") is a valid location." << endl;
+    //Verify if coordinates are valid and if the game square is occupied.
+    coordinatesAreValid = _verifyCoordinates(rowIndex, columnIndex);
+    gameSquareOccupied = _isGameSquareOccupied(rowIndex, columnIndex);
+    //We enter the while loop only when the choice of game square is invalid or occupied.
+    //We keep asking for valid coordinates until they are and that the square is not occupied.
+    while (!coordinatesAreValid || (gameSquareOccupied))
+    {
+        //Prompt user for valid cordinates and help them out a bit more depending on validity
+        if (!coordinatesAreValid)
+        {
+            cout << "You did not enter valid coordinates for you next move. Please enter a row integer then press Enter, then enter a column integer and press Enter again. No other format or characters are accepted." << endl;
+        }
+        else if (gameSquareOccupied)
+        {
+            cout << "This is an illegal move. There is already a token at that location. Please enter a row integer then press Enter, then enter a column integer and press Enter again. No other format or characters are accepted." << endl;
+        }
+        cout << "row #: ";
+        cin >> rowIndex;
+        cout << endl;
+        cout << "column #: ";
+        cin >> columnIndex;
+        cout << "Verifying if (" << rowIndex << ", " << columnIndex << ") is a valid location." << endl;
+        //Verification of valid coordinates inside the while loop.
+        coordinatesAreValid = _verifyCoordinates(rowIndex, columnIndex);
+        gameSquareOccupied = _isGameSquareOccupied(rowIndex, columnIndex);
+    }
+    //If we get to this point, we have a free and valid square, return this node.
+    return _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex));
+    
+}
+
+//Helper function to verify if the coordinates chosen are valid. Return true if valid.
+bool HexGame::_verifyCoordinates(int rowIndex, int columnIndex)
+{
+    if (rowIndex >= 0 && rowIndex < gameSize && columnIndex >= 0 && columnIndex < gameSize)
+    {
+        return true;
+    }
+    return false;
+}
+
+//Helper function to check if the chosen game square is occupied or not.
+bool HexGame::_isGameSquareOccupied(int rowIndex, int columnIndex)
+{
+    //HexNode * nodePtr = (HexNode *)(_gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex)));
+    if ( static_cast<HexNode*>(_gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex)))->state == HexNodeState::UNOCCUPIED)
+    {
+        return false;
+    }
+    return true;
+}
+
+//Helper function to get the nodeID from square coodinates on the game board.
+int HexGame::_getNodeIDFromCoordinates(int row,int col)
+{
+    //We make sure that the row and column are valid
+    if (col != gameSize && row != gameSize)
+    {
+        //Return the row number multiplied by the game board size plus the column number.
+        //THis is base on the fact that columns and rows go from 0 to gameSize-1.
+        return (row*gameSize+col);
+    }
+    else
+    {
+        cout << "ERROR - ROW or COL OUTSIDE OF RANGE in _getNodePtrFromCoordinates" << endl;
+    }
+    return -1;
+}
+tuple<int, int> HexGame::_getCoordinatesFromNodeID(int nodeID)
+{
+    return make_tuple(nodeID/gameSize, nodeID%gameSize);
+}
+
+//Helper function that print's the board game to the console window.
+/*
+Example 5x5 board:
+ . - . - . - . - .
+  \ / \ / \ / \ / \
+   . - . - . - . - .
+    \ / \ / \ / \ / \
+     . - . - . - . - .
+      \ / \ / \ / \ / \
+       . - . - . - . - .
+        \ / \ / \ / \ / \
+         . - . - . - . - .
+ */
+void HexGame::_printGameBoard()
+{
+    cout << endl;
+    int currentNodeID = 0;
+    int realRowCount = 0;
+    //loop through all the rows in the game board
+    for (int rowIndex = 0; rowIndex<gameSize ; rowIndex++)
+    {
+        //Indent the row by the number of the row count + 1 space
+        cout << right << setw(realRowCount+1);
+        //Increment the row count. This could be done at the end of the row but no other code bellow uses realRowCount.
+        realRowCount++;
+        //Loop through all columns in the game board.
+        for (int columnIndex=0 ; columnIndex<gameSize*1 ; columnIndex++)
+        {
+            // Assertion test to make sure we do not print more nodes then they are squares in the game.
+            // This type of assertion does not crash the game
+            if (currentNodeID >= gameSize*gameSize)
+            {
+                break;
+            }
+            // Determine the current node type, A node can be "." for unoccupied nodes, B for Blue occupied nodes and R for Red occupied nodes.
+            switch ( (static_cast<HexNode*>(_gameGraphPtr->getNodePtr(currentNodeID)))->state ) {
+                case HexNodeState::BLUE:
+                    cout << "B";
+                    break;
+                case HexNodeState::RED:
+                    cout << "R";
+                    break;
+                case HexNodeState::UNOCCUPIED:
+                    cout << ".";
+                    break;
+                default:
+                    cout << "ERROR";
+            }
+            //Space after each character.
+            cout << " ";
+            //If we are at a node that has a following node, print a "-".
+            if (columnIndex < gameSize-1)
+            {
+                cout << "-";
+            }
+            //Space after each character.
+            cout << " ";
+            //If we are at the end of the node make a carriage return.
+            if (currentNodeID % gameSize == gameSize-1)
+            {
+                cout << endl;
+            }
+            //Increment the currentNodeID (acts like a node count)
+            currentNodeID++;
+        }
+         
+        cout << right << setw(realRowCount+3);
+        realRowCount++;
+        //For every pair lines only, print the sequence of edges from above-left "\" and above-right node "/".
+        //Since we are still in the same iteration for the row and we printed a whole row in the first column loop, we can go ahead and fill a whole row for edges only except if we are passed the final row of nodes
+        if (rowIndex < gameSize-1){
+            //Loop through all columns
+            for (int columnIndex=0 ; columnIndex<gameSize*1 ; columnIndex++)
+            {
+                //If we are not at the end of the row print "\" and "/" with one space in between.
+                if (columnIndex < gameSize-1)
+                {
+                        //Note, we must use a escaping \ to print the "\".
+                        cout << "\\ /";
+                }
+                else
+                {
+                    //If we are at the last column, do not print the "/" character, only the "\"
+                    cout << "\\";
+                }
+                //Space after each character.
+                cout << " ";
+            }
+            
+        }
+        cout << endl;
+    }
+}
+
+//Deconstructor for the HexGame object to make sure
+HexGame::~HexGame()
+{
+    //Delete the object pointed by this pointer
+    delete _gameGraphPtr;
+    //cout << "HexGame DECONSTRUCTOR CALLED" << endl;
+    //Set game to isActive to false. isActive is mostly used for debugging.
+    isActive = false;
+}
+
+
+
+
+#endif /* HexGame_hpp */
