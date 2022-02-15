@@ -13,16 +13,11 @@
 #include <stdio.h>
 //If the object of the bellow class must be instantiated here in this template they must also have their file included here.
 #include "Node.hpp"
+#include "HexNodeState.hpp"
 
 //Bellow class is forwarded
 template<typename HexNode>
 class Edge;
-
-//Enum to mark a square as owned by Blue, Red or Unoccupied.
-enum class HexNodeState
-{
-    UNOCCUPIED, RED, BLUE
-};
 
 //Definition, Implementation, Super Class of Node<NodeType>
 class HexNode: public Node<HexNode>
@@ -30,6 +25,9 @@ class HexNode: public Node<HexNode>
 public:
     //Set the node state to default to Unoccupied.
     HexNodeState state = HexNodeState::UNOCCUPIED;
+    //Set move score to 0. This variable is used by AI to evaluate best potential moves.
+    int moveScore = 0;
+    //Default constructor
     HexNode(int nodeName=0);
 private:
     

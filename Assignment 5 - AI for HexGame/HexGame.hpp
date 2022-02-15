@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <tuple>
 #include "HexGameGraph.hpp"
+#include "AIPlayer.hpp"
 
 //Having transformed all graph, node, edge, mst, priority_queue, it was necessary to put all implementation of those classes into the .hpp "header" file since they are created during compile time and not instantiated until needed.
 //HexGame was also created the same way to keep it the same as the whole project.
@@ -181,28 +182,36 @@ HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
 //Game Loop
 void HexGame::_startGameLoop()
 {
+    
     bool gameOver = false;
     //PRINT HEX BOARD
     _printGameBoard();
-    int numberHumanOfPlayers;
+    int numberHumanPlayers;
     cout << "Please enter \"1\" if you want to play single player or \"2\" for a hot seat two player game of Hex. :";
-    cin >> numberHumanOfPlayers;
+    cin >> numberHumanPlayers;
     //Loop while the game is not over.
+
+//    AIPlayer aiPlayer1 = new AIPlayer();
     while (!gameOver)
     {
+//FIXME: Ask player 1's color here
+        
         //Ask first player move
         HexNode * nodePtr = _askPlayerForCoordinates(1);
+        
+//FIXME: update the current player pointer.
         nodePtr->state = HexNodeState::RED;
+        
         _printGameBoard();
         
-        if (_checkIfPlayerHasWon(1, nodePtr))
+        if (numberHumanPlayers != 0 && _checkIfPlayerHasWon(1, nodePtr))
         {
             _playerHasWon(1);
             gameOver = true;
             break;
         }
         //If playing hot seat 2 player game, ask 2nd player to enter move
-        if (numberHumanOfPlayers == 2)
+        if (numberHumanPlayers == 2)
         {
             nodePtr = _askPlayerForCoordinates(2);
             nodePtr->state = HexNodeState::BLUE;

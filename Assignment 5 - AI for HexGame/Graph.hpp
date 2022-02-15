@@ -52,8 +52,8 @@ public:
     int TotalNodes() {return _totalNodes;}; // Maintains number of nodes/vertices in graph
     int TotalEdges() {return _totalEdges;}; // Maintains number of edges in graph
     int srandSeed() {return _srandSeed;}; // For reporting purpouse, each graphs randomizer seed is recorded here.
-    const vector<NodeType*> * const getNodes() const;
-    const vector<Edge<NodeType>*> * const getEdges() const;
+    const vector<NodeType*> getNodes() const;
+    const vector<Edge<NodeType>*> getEdges() const;
     // Function that return true if an edge exist in the graph in O(1) times.
     bool isEdge(const NodeType & ptrStartNode, const NodeType & ptrToEndNode) const;
     
@@ -100,7 +100,7 @@ public:
     
     //--------------------   Added getMinimumSpanningTree function for assignment 4.
     //Function that returns the minimum spanning tree for the graph using PRIM's algorithm
-    MST<NodeType> getMinimumSpanningTreePRIM(int startingNodeID=0);
+    MST<NodeType>* getMinimumSpanningTreePRIM(int startingNodeID=0);
     
     
     ///Constructors
@@ -141,14 +141,13 @@ protected:
 };
 
 template <typename NodeType>
-const vector<NodeType*> * const Graph<NodeType>::getNodes() const
+const vector<NodeType*> Graph<NodeType>::getNodes() const
 {
-    const vector<NodeType*> nodeList(_graphNodeList.begin(),_graphNodeList.end());
-    return nodeList;
+    return _graphNodeList;
 };
 
 template <typename NodeType>
-const vector<Edge<NodeType>*>* const Graph<NodeType>::getEdges() const
+const vector<Edge<NodeType>*> Graph<NodeType>::getEdges() const
 {
     const vector<Edge<NodeType>*> * const edgeList(_graphEdgeList.begin(),_graphEdgeList.end());
     return edgeList;
@@ -460,7 +459,7 @@ void Graph<NodeType>::print()
 
 // This method returns the shortest path between 2 nodes using Diskstra's Shortest Path Algorithm
 template <typename NodeType>
-Path<NodeType> * Graph<NodeType>::getShortestPath(NodeType * ptrToStartNode, NodeType * ptrToEndNode)
+Path<NodeType>* Graph<NodeType>::getShortestPath(NodeType * ptrToStartNode, NodeType * ptrToEndNode)
 {
     // My class Path is a vector of nodes and only assigns starting node when initializing with
     // 0.0 as it's Node.shortestDistanceToCurrentNodeInPath as a double.
@@ -615,10 +614,10 @@ NodeType * Graph<NodeType>::getNodePtr(int nodeID)
 //--------------------   Added getMinimumSpanningTree function for assignment 4.
 //Function that returns the minimum spanning tree for the graph using PRIM's algorithm
 template <typename NodeType>
-MST<NodeType> Graph<NodeType>::getMinimumSpanningTreePRIM(int startingNodeID)
+MST<NodeType>* Graph<NodeType>::getMinimumSpanningTreePRIM(int startingNodeID)
 {
     //Create the tree
-    MST<NodeType> minimumSpanningTree;
+    MST<NodeType>* minimumSpanningTree = new MST<NodeType>;
     //Create a priority queue for all unvisited nodes
     PriorityQueue<NodeType> pqUnvisited;
     //Arbitraly choose the starting node
@@ -665,11 +664,11 @@ MST<NodeType> Graph<NodeType>::getMinimumSpanningTreePRIM(int startingNodeID)
         {
             cout << "Warning - There are still unvisited nodes but the graph is broken (incomplete)" << endl;
             //Note that all MSTs are initialized with true as the isValid flag.
-            minimumSpanningTree.isValid = false;
+            minimumSpanningTree->isValid = false;
             break;
         }
         //Add the edge with the smallest cost of the current node.
-        minimumSpanningTree.addEdge(ptrToCurrentNode->ptrToEdgeWithShortestDistance);
+        minimumSpanningTree->addEdge(ptrToCurrentNode->ptrToEdgeWithShortestDistance);
     }
     //Return the current MST even if it is not valid.
     return minimumSpanningTree;
@@ -880,59 +879,59 @@ bool Graph<NodeType>::_createEdgeDependingOn(double edgeDensity)
     return false;
 }
 
-// Helper function to print a matrix of node to node edge costs.
-// This function is outside the graph since a matrix of vector of vectors of doubles is created outside the graph.
-void printMatrix(vector<vector<double>> const &matrixOfNodeEdgeCosts)
-{
-    for (int rowIndex = 0; rowIndex < matrixOfNodeEdgeCosts.size()+1;rowIndex++)
-    {
-        if (rowIndex == 0)
-        {
-            cout << left << setw(10) << "NodeID";
-        }
-        if (rowIndex > 0)
-        {
-            if (rowIndex ==1)
-            {
-                cout <<  right << setw(6) << rowIndex-1 << " {";
-            }
-            else
-            {
-                cout <<  right << setw(6) << rowIndex-1 << "  ";
-            }
-            cout << "{ ";
-        }
-        
-        for (int columnIndex = 0; columnIndex < matrixOfNodeEdgeCosts.size()+1; columnIndex++) {
-            if (rowIndex == 0 && columnIndex > 0)
-            {
-                cout << left << setw(4) << columnIndex-1;
-            }
-            else if(rowIndex > 0 && columnIndex > 0)
-            {
-                cout <<  matrixOfNodeEdgeCosts[rowIndex-1][columnIndex-1] << setw(3);
-                if (columnIndex > 0 && columnIndex < matrixOfNodeEdgeCosts.size())
-                {
-                    cout << ",";
-                }
-            }
-            
-        }
-        if (rowIndex < matrixOfNodeEdgeCosts.size()+1)
-        {
-            if (rowIndex != 0)
-            {
-                cout << "}";
-            }
-            if (rowIndex != matrixOfNodeEdgeCosts.size())
-            {
-                cout << endl;
-            }
-        }
-    }
-    cout << "}" << endl;
-    cout << endl;
-}
+//// Helper function to print a matrix of node to node edge costs.
+//// This function is outside the graph since a matrix of vector of vectors of doubles is created outside the graph.
+//void printMatrix(vector<vector<double>> const &matrixOfNodeEdgeCosts)
+//{
+//    for (int rowIndex = 0; rowIndex < matrixOfNodeEdgeCosts.size()+1;rowIndex++)
+//    {
+//        if (rowIndex == 0)
+//        {
+//            cout << left << setw(10) << "NodeID";
+//        }
+//        if (rowIndex > 0)
+//        {
+//            if (rowIndex ==1)
+//            {
+//                cout <<  right << setw(6) << rowIndex-1 << " {";
+//            }
+//            else
+//            {
+//                cout <<  right << setw(6) << rowIndex-1 << "  ";
+//            }
+//            cout << "{ ";
+//        }
+//        
+//        for (int columnIndex = 0; columnIndex < matrixOfNodeEdgeCosts.size()+1; columnIndex++) {
+//            if (rowIndex == 0 && columnIndex > 0)
+//            {
+//                cout << left << setw(4) << columnIndex-1;
+//            }
+//            else if(rowIndex > 0 && columnIndex > 0)
+//            {
+//                cout <<  matrixOfNodeEdgeCosts[rowIndex-1][columnIndex-1] << setw(3);
+//                if (columnIndex > 0 && columnIndex < matrixOfNodeEdgeCosts.size())
+//                {
+//                    cout << ",";
+//                }
+//            }
+//            
+//        }
+//        if (rowIndex < matrixOfNodeEdgeCosts.size()+1)
+//        {
+//            if (rowIndex != 0)
+//            {
+//                cout << "}";
+//            }
+//            if (rowIndex != matrixOfNodeEdgeCosts.size())
+//            {
+//                cout << endl;
+//            }
+//        }
+//    }
+//    cout << "}" << endl;
+//    cout << endl;
+//}
 
 
 #endif /* Graph_h */

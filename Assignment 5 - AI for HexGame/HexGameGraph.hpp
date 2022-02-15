@@ -15,7 +15,7 @@
 #include "HexNode.hpp"
 #include "MST.hpp"
 
-class HexGameGraph : public Graph<HexNode>
+extern class HexGameGraph : public Graph<HexNode>
 {
 public:
     HexGameGraph(int gameSize=5):Graph<HexNode>{gameSize*gameSize}{};
@@ -27,7 +27,7 @@ public:
 //    HexNode* getNodePtr(int nodeID);
 private:
     MST<HexNode>* getMinimumSpanningTreePRIM(int startingNodeID, HexNodeState state);
-    Path<HexNode> * _getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState);
+    Path<HexNode> * getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState);
     
 };
 
@@ -100,7 +100,7 @@ MST<HexNode>* HexGameGraph::getMinimumSpanningTreePRIM(int startingNodeID, HexNo
     return minimumSpanningTree;
 }
 
-Path<HexNode> * HexGameGraph::_getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState)
+Path<HexNode>* HexGameGraph::getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState)
 {
     // My class Path is a vector of nodes and only assigns starting node when initializing with
     // 0.0 as it's Node.shortestDistanceToCurrentNodeInPath as a double.

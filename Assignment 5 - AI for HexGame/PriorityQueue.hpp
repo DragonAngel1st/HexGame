@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 //Bellow class is forwarded
 template<typename NodeType>
