@@ -191,7 +191,8 @@ void HexGame::_startGameLoop()
     cin >> numberHumanPlayers;
     //Loop while the game is not over.
 
-//    AIPlayer aiPlayer1 = new AIPlayer();
+    AIPlayer aiPlayer1 = new AIPlayer(HexNodeState::RED);
+    aiPlayer->
     while (!gameOver)
     {
 //FIXME: Ask player 1's color here

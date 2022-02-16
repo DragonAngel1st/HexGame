@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		393F75F827BADDE400F49866 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 393F75F627BADDE400F49866 /* main.cpp */; };
-		396B35C627BBF5E5001481E7 /* AIPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 396B35C427BBF5E5001481E7 /* AIPlayer.cpp */; };
+		396B35C627BBF5E5001481E7 /* AIPlayer.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 396B35C427BBF5E5001481E7 /* AIPlayer.hpp */; };
 		396B35C927BC3A8F001481E7 /* HexNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 396B35C727BC3A8F001481E7 /* HexNodeState.cpp */; };
 /* End PBXBuildFile section */
 
@@ -37,8 +37,8 @@
 		393F75F527BADDE400F49866 /* Path.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Path.hpp; sourceTree = "<group>"; };
 		393F75F627BADDE400F49866 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "../../Part B - Assignment 4 - Hex Game/HexGame/Part B - Assignment 4 - Hex Game/main.cpp"; sourceTree = "<group>"; };
 		393F75F727BADDE400F49866 /* MST.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MST.hpp; sourceTree = "<group>"; };
-		396B35C427BBF5E5001481E7 /* AIPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AIPlayer.cpp; sourceTree = "<group>"; };
-		396B35C527BBF5E5001481E7 /* AIPlayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AIPlayer.hpp; sourceTree = "<group>"; };
+		396B35C427BBF5E5001481E7 /* AIPlayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AIPlayer.hpp; sourceTree = "<group>"; };
+		396B35C527BBF5E5001481E7 /* AIPlayer.old.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AIPlayer.old.hpp; sourceTree = "<group>"; };
 		396B35C727BC3A8F001481E7 /* HexNodeState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HexNodeState.cpp; sourceTree = "<group>"; };
 		396B35C827BC3A8F001481E7 /* HexNodeState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HexNodeState.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,8 +73,8 @@
 		393F75E527BADDCF00F49866 /* Assignment 5 - AI for HexGame */ = {
 			isa = PBXGroup;
 			children = (
-				396B35C427BBF5E5001481E7 /* AIPlayer.cpp */,
-				396B35C527BBF5E5001481E7 /* AIPlayer.hpp */,
+				396B35C427BBF5E5001481E7 /* AIPlayer.hpp */,
+				396B35C527BBF5E5001481E7 /* AIPlayer.old.hpp */,
 				393F75F327BADDE400F49866 /* Edge.hpp */,
 				393F75F427BADDE400F49866 /* Graph.hpp */,
 				393F75F127BADDE400F49866 /* HexGame.hpp */,
@@ -149,7 +149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				396B35C627BBF5E5001481E7 /* AIPlayer.cpp in Sources */,
+				396B35C627BBF5E5001481E7 /* AIPlayer.hpp in Sources */,
 				393F75F827BADDE400F49866 /* main.cpp in Sources */,
 				396B35C927BC3A8F001481E7 /* HexNodeState.cpp in Sources */,
 			);
@@ -273,6 +273,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 3R9FJ228NZ;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

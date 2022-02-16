@@ -15,7 +15,7 @@
 #include "HexNode.hpp"
 #include "MST.hpp"
 
-extern class HexGameGraph : public Graph<HexNode>
+class HexGameGraph : public Graph<HexNode>
 {
 public:
     HexGameGraph(int gameSize=5):Graph<HexNode>{gameSize*gameSize}{};
