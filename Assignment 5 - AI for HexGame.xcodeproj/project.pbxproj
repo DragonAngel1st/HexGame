@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		393F75F827BADDE400F49866 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 393F75F627BADDE400F49866 /* main.cpp */; };
 		396B35C627BBF5E5001481E7 /* AIPlayer.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 396B35C427BBF5E5001481E7 /* AIPlayer.hpp */; };
-		396B35C927BC3A8F001481E7 /* HexNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 396B35C727BC3A8F001481E7 /* HexNodeState.cpp */; };
+		39D040CA27BD6F5300A062D9 /* HexGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39D040C927BD6F5300A062D9 /* HexGame.cpp */; };
+		39D040CC27BD6FE200A062D9 /* AIPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39D040CB27BD6FE200A062D9 /* AIPlayer.cpp */; };
+		39FAA6DE27C2E59400730851 /* HexGameGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39FAA6DD27C2E59400730851 /* HexGameGraph.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,9 +40,10 @@
 		393F75F627BADDE400F49866 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = "../../Part B - Assignment 4 - Hex Game/HexGame/Part B - Assignment 4 - Hex Game/main.cpp"; sourceTree = "<group>"; };
 		393F75F727BADDE400F49866 /* MST.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MST.hpp; sourceTree = "<group>"; };
 		396B35C427BBF5E5001481E7 /* AIPlayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AIPlayer.hpp; sourceTree = "<group>"; };
-		396B35C527BBF5E5001481E7 /* AIPlayer.old.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AIPlayer.old.hpp; sourceTree = "<group>"; };
-		396B35C727BC3A8F001481E7 /* HexNodeState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HexNodeState.cpp; sourceTree = "<group>"; };
 		396B35C827BC3A8F001481E7 /* HexNodeState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HexNodeState.hpp; sourceTree = "<group>"; };
+		39D040C927BD6F5300A062D9 /* HexGame.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HexGame.cpp; sourceTree = "<group>"; };
+		39D040CB27BD6FE200A062D9 /* AIPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AIPlayer.cpp; sourceTree = "<group>"; };
+		39FAA6DD27C2E59400730851 /* HexGameGraph.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HexGameGraph.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,14 +77,15 @@
 			isa = PBXGroup;
 			children = (
 				396B35C427BBF5E5001481E7 /* AIPlayer.hpp */,
-				396B35C527BBF5E5001481E7 /* AIPlayer.old.hpp */,
+				39D040CB27BD6FE200A062D9 /* AIPlayer.cpp */,
 				393F75F327BADDE400F49866 /* Edge.hpp */,
 				393F75F427BADDE400F49866 /* Graph.hpp */,
 				393F75F127BADDE400F49866 /* HexGame.hpp */,
+				39D040C927BD6F5300A062D9 /* HexGame.cpp */,
 				393F75ED27BADDE400F49866 /* HexGameByPatrickMiron_assign4.txt */,
 				393F75EF27BADDE400F49866 /* HexGameGraph.hpp */,
+				39FAA6DD27C2E59400730851 /* HexGameGraph.cpp */,
 				393F75F027BADDE400F49866 /* HexNode.hpp */,
-				396B35C727BC3A8F001481E7 /* HexNodeState.cpp */,
 				396B35C827BC3A8F001481E7 /* HexNodeState.hpp */,
 				393F75F627BADDE400F49866 /* main.cpp */,
 				393F75F727BADDE400F49866 /* MST.hpp */,
@@ -149,9 +153,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39FAA6DE27C2E59400730851 /* HexGameGraph.cpp in Sources */,
 				396B35C627BBF5E5001481E7 /* AIPlayer.hpp in Sources */,
 				393F75F827BADDE400F49866 /* main.cpp in Sources */,
-				396B35C927BC3A8F001481E7 /* HexNodeState.cpp in Sources */,
+				39D040CC27BD6FE200A062D9 /* AIPlayer.cpp in Sources */,
+				39D040CA27BD6F5300A062D9 /* HexGame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,9 +279,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 3R9FJ228NZ;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GENERATE_MASTER_OBJECT_FILE = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -286,6 +294,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3R9FJ228NZ;
 				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GENERATE_MASTER_OBJECT_FILE = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

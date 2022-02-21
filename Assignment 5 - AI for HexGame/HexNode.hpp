@@ -36,7 +36,7 @@ private:
 
 
 //IMPLEMENTATION
-HexNode::HexNode(int nodeName): Node<HexNode>{nodeName} {
+inline HexNode::HexNode(int nodeName): Node<HexNode>{nodeName} {
     ptrToVectorDirectedEdges = new vector<Edge<HexNode>*>;
 };
 

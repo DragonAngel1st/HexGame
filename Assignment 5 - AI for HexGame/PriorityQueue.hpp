@@ -67,14 +67,14 @@ public:
 // The default constructor here is overidden with making sure that the queue does not have a nullptr, this is to facilitate
 //  branching and program pathing
 template <typename NodeType>
-PriorityQueue<NodeType>::PriorityQueue()
+inline PriorityQueue<NodeType>::PriorityQueue()
 {
     _ptrToPriorityQueue = new vector<NodeType*>;
 }
 // Public function to sort queue by nodePtr->shortestDistanceToCurrentNodeInPath
 
 template <typename NodeType>
-void PriorityQueue<NodeType>::sortByShortestPath()
+inline void PriorityQueue<NodeType>::sortByShortestPath()
 {
     sort(_ptrToPriorityQueue->begin(),_ptrToPriorityQueue->end(), [](const Node<NodeType> * lhs, const Node<NodeType> * rhs){
         return lhs->shortestDistanceToCurrentNodeInPath < rhs->shortestDistanceToCurrentNodeInPath;
@@ -84,13 +84,13 @@ void PriorityQueue<NodeType>::sortByShortestPath()
 // Public function to access local members and prevent unwanted use.
 // Returns a node ptr that cannot be changed by caller.
 template <typename NodeType>
-const vector<NodeType*> PriorityQueue<NodeType>::getNodesInQueue() const
+inline const vector<NodeType*> PriorityQueue<NodeType>::getNodesInQueue() const
 {
     return *_ptrToPriorityQueue;
 }
 
 template <typename NodeType>
-NodeType* PriorityQueue<NodeType>::pop()
+inline NodeType* PriorityQueue<NodeType>::pop()
 {
     NodeType * nodePtr = *_ptrToPriorityQueue->begin();
     _ptrToPriorityQueue->erase(_ptrToPriorityQueue->begin());
@@ -99,7 +99,7 @@ NodeType* PriorityQueue<NodeType>::pop()
 
 // Checks is a node is part of the queue.
 template <typename NodeType>
-bool PriorityQueue<NodeType>::nodeExist(NodeType * nodePtr)
+inline bool PriorityQueue<NodeType>::nodeExist(NodeType * nodePtr)
 {
     for(int index=0 ; index < _ptrToPriorityQueue->size() ; index++)
     {
@@ -113,7 +113,7 @@ bool PriorityQueue<NodeType>::nodeExist(NodeType * nodePtr)
 
 // Adds a node to the queue.
 template <typename NodeType>
-void PriorityQueue<NodeType>::addNode(NodeType * ptrToNode)
+inline void PriorityQueue<NodeType>::addNode(NodeType * ptrToNode)
 {
     _ptrToPriorityQueue->push_back(ptrToNode);
     // Set the node's memoization of its location in the queue. In future version of program, this could be done with an Hashtable without adding to much cost in O(times)
@@ -122,7 +122,7 @@ void PriorityQueue<NodeType>::addNode(NodeType * ptrToNode)
 
 // Function to add a bunch of nodes through a vector of ptrs to nodes.
 template <typename NodeType>
-void PriorityQueue<NodeType>::addVectorOfNodes(vector<NodeType*> neighboringNodes)
+inline void PriorityQueue<NodeType>::addVectorOfNodes(vector<NodeType*> neighboringNodes)
 {
     for (NodeType * eachNode : neighboringNodes)
     {
@@ -133,7 +133,7 @@ void PriorityQueue<NodeType>::addVectorOfNodes(vector<NodeType*> neighboringNode
 
 // This function returns the next node ptr in the front of the queue WITHOUT deleting it.
 template <typename NodeType>
-NodeType* PriorityQueue<NodeType>::getNextNode()
+inline NodeType* PriorityQueue<NodeType>::getNextNode()
 {
     return _ptrToPriorityQueue->front();
 }
@@ -141,11 +141,11 @@ NodeType* PriorityQueue<NodeType>::getNextNode()
 // This function removes a node ptr in the queue at any location in the queue and returns nothing.
 // Please note that this function will run in O(degre of Nodes) because it has to update each nodes location when it deletes it.
 template <typename NodeType>
-void PriorityQueue<NodeType>::removeNode(NodeType* nodePtr)
+inline void PriorityQueue<NodeType>::removeNode(NodeType* nodePtr)
 {
     int nodeIDtoRemove = nodePtr->indexOfNodeInUnvistedQueue;
     *_ptrToPriorityQueue->erase(_ptrToPriorityQueue->begin()+nodeIDtoRemove);
-    for (Node<NodeType> * ptrNode : vector<Node<NodeType>*>(_ptrToPriorityQueue->begin()+nodeIDtoRemove,_ptrToPriorityQueue->end()))
+    for (NodeType* ptrNode : vector<NodeType*>(_ptrToPriorityQueue->begin()+nodeIDtoRemove,_ptrToPriorityQueue->end()))
     {
         ptrNode->indexOfNodeInUnvistedQueue -= 1;
     }
@@ -153,14 +153,14 @@ void PriorityQueue<NodeType>::removeNode(NodeType* nodePtr)
 
 // Returns true if the queue is empty
 template <typename NodeType>
-bool PriorityQueue<NodeType>::empty()
+inline bool PriorityQueue<NodeType>::empty()
 {
     return _ptrToPriorityQueue->empty();
 }
 
 // Helper function to visualy see a queue's contents
 template <typename NodeType>
-void PriorityQueue<NodeType>::print(string nameOfQueue)
+inline void PriorityQueue<NodeType>::print(string nameOfQueue)
 {
     cout << endl;
     cout << nameOfQueue << " queue: (front of queue is on the left)" << endl;

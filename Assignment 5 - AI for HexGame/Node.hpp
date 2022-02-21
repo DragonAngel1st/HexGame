@@ -13,7 +13,7 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-
+//#include "Edge.hpp"
 using namespace std;
 
 const double Infinity = INFINITY;
@@ -69,7 +69,7 @@ public:
 //IMPLEMENTATION
 //The self construction of the Graph is only using this node constructor.
 template <typename NodeType>
-Node<NodeType>::Node(int nodeName):nodeID(nodeName){
+inline Node<NodeType>::Node(int nodeName):nodeID(nodeName){
     // For evaluation purpouses, and program pathing, it's better to instantiate empty vector of neighbor nodes or edges instead of dealing with an null pointer.
     ptrToVectorDirectedEdges = new vector<Edge<NodeType>*>;
     ptrToVectorOfNeighborPtrs = new vector<NodeType*>;
@@ -77,14 +77,14 @@ Node<NodeType>::Node(int nodeName):nodeID(nodeName){
 }
 
 template <typename NodeType>
-Node<NodeType>::Node(const NodeType &node)
+inline Node<NodeType>::Node(const NodeType &node)
 {
     //This constructor should not be called since the implementation uses ptrs of nodes. Never directly copy a node! It can have too much data.
     cout << "The Node Copy CONSTRUCTOR was called." << endl;
 }
 
 template <typename NodeType>
-NodeType& Node<NodeType>::operator=(const NodeType& other)
+inline NodeType& Node<NodeType>::operator=(const NodeType& other)
 {
     //This assignment operator should not be called since the implementation uses ptrs of nodes. Never directly copy a node! It can have too much data.
     cout << "The Node Assignment OPERATOR was called." << endl;
@@ -93,13 +93,13 @@ NodeType& Node<NodeType>::operator=(const NodeType& other)
 
 //Move Constructor
 template <typename NodeType>
-Node<NodeType>::Node(NodeType &&other) noexcept
+inline Node<NodeType>::Node(NodeType &&other) noexcept
 {
     cout << "The Node Move CONSTRUCTOR was called." << endl;
 }
 //Move Assignment
 template <typename NodeType>
-NodeType& Node<NodeType>::operator=(NodeType &&other) noexcept
+inline NodeType& Node<NodeType>::operator=(NodeType &&other) noexcept
 {
     cout << "The Node Move ASSIGNMENT was called." << endl;
     return *this;
@@ -107,43 +107,43 @@ NodeType& Node<NodeType>::operator=(NodeType &&other) noexcept
 
 // For evaluating the order of the nodes. The node with the current shortest distance to it is the one that comes first.
 template <typename NodeType>
-bool Node<NodeType>::operator>(const NodeType& other) const
+inline bool Node<NodeType>::operator>(const NodeType& other) const
 {
     return this->shortestDistanceToCurrentNodeInPath > other.shortestDistanceToCurrentNodeInPath;
 };
 
 template <typename NodeType>
-bool Node<NodeType>::operator<(const NodeType& other) const
+inline bool Node<NodeType>::operator<(const NodeType& other) const
 {
     return this->shortestDistanceToCurrentNodeInPath < other.shortestDistanceToCurrentNodeInPath;
 };
 
 template <typename NodeType>
-bool Node<NodeType>::operator==(const NodeType& other) const
+inline bool Node<NodeType>::operator==(const NodeType& other) const
 {
     return this->shortestDistanceToCurrentNodeInPath == other.shortestDistanceToCurrentNodeInPath;
 }
 
 template <typename NodeType>
-bool Node<NodeType>::operator!=(const NodeType& other) const
+inline bool Node<NodeType>::operator!=(const NodeType& other) const
 {
     return this->shortestDistanceToCurrentNodeInPath != other.shortestDistanceToCurrentNodeInPath;
 }
 
 template <typename NodeType>
-bool Node<NodeType>::compareNodeID(NodeType * node, NodeType * other)
+inline bool Node<NodeType>::compareNodeID(NodeType * node, NodeType * other)
 {
     return (node->nodeID < other->nodeID);
 }
 
 template <typename NodeType>
-bool Node<NodeType>::compareNodeCurrentShortestPath(NodeType * node, NodeType * other)
+inline bool Node<NodeType>::compareNodeCurrentShortestPath(NodeType * node, NodeType * other)
 {
     return (node->shortestDistanceToCurrentNodeInPath < other->shortestDistanceToCurrentNodeInPath);
 }
 
 template <typename NodeType>
-Node<NodeType>::~Node()
+inline Node<NodeType>::~Node()
 {
     //cout << "The Node DECONSTRUCTOR was called. ID: " << nodeID << endl;
     this->ptrToEdgeWithShortestDistance = nullptr;
@@ -158,7 +158,7 @@ Node<NodeType>::~Node()
 
 // Overloading the "<<" operator in ostream for the "std::cout" to be a "std::cout" to print the description of the node. Not completely implemented.
 template <typename NodeType>
-std::ostream& operator<<(std::ostream& stream, const Node<NodeType>& node)
+inline std::ostream& operator<<(std::ostream& stream, const Node<NodeType>& node)
 {
     return stream << "The node ID: " << node.nodeID;
 }

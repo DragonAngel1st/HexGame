@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include "Node.hpp"
 
-
+using namespace std;
 // The class path is for storing paths/shortest paths resulting from Dijkstra's algorithm.
 template <typename NodeType>
 class Path
@@ -26,67 +26,51 @@ public:
     
     // Create a default constructor since a custom one was created bellow. The graph itself never uses the empty constructor.
     //  It is used to create an empty path in the results to hold the shortest and longest paths of the iteration of averaging the shortest path algorithm.
-    Path();
+    Path(){};
     
     // Each path is instantiated by the Dijkstra's algoritm in the graph with a ptr to the start node and a starting cost/distance of 0.0
-    Path(Node<NodeType> * ptrToStartNode);
+    Path(Node<NodeType> * ptrToStartNode):totalDistance(0.0)
+    {
+        nodesVector.push_back(ptrToStartNode);
+    }
     
     // Public function for Adding a node ptr to the path
-    void addNode(Node<NodeType> * ptrToNewNode);
+    void addNode(Node<NodeType> * ptrToNewNode)
+    {
+        nodesVector.push_back(ptrToNewNode);
+        //The total is recorded in the last node. This next line rewrites the total cost going through all nodes in path.
+        totalDistance = ptrToNewNode->shortestDistanceToCurrentNodeInPath;
+    }
     
     // Helper function to see the results visually to the console.
-    void print();
-};
-
-using namespace std;
-template <typename NodeType>
-Path<NodeType>::Path(){};
-
-// Each path is instantiated by the Dijkstra's algoritm in the graph with a ptr to the start node and a starting cost/distance of 0.0
-template <typename NodeType>
-Path<NodeType>::Path(Node<NodeType> * ptrToStartNode):totalDistance(0.0)
-{
-    nodesVector.push_back(ptrToStartNode);
-}
-
-// Public function for Adding a node ptr to the path
-template <typename NodeType>
-void Path<NodeType>::addNode(Node<NodeType> * ptrToNewNode)
-{
-    nodesVector.push_back(ptrToNewNode);
-    //The total is recorded in the last node. This next line rewrites the total cost going through all nodes in path.
-    totalDistance = ptrToNewNode->shortestDistanceToCurrentNodeInPath;
-}
-
-// Helper function to see the results visually to the console.
-template <typename NodeType>
-void Path<NodeType>::print()
-{
-    cout << "From start node " << nodesVector[0]->nodeID << " to End node " << nodesVector[nodesVector.size()-1]->nodeID << " :" << endl;
-    double totalPathCost = 0.0;
-    int nodeCount = 0;
-    cout << "  " << setw(3);
-    for(Node<NodeType> * nodePtr : nodesVector)
+    void print()
     {
-        cout << right << nodePtr->nodeID  << setw(2);
-        if (nodeCount != nodesVector.size()-1)
+        cout << "From start node " << nodesVector[0]->nodeID << " to End node " << nodesVector[nodesVector.size()-1]->nodeID << " :" << endl;
+        double totalPathCost = 0.0;
+        int nodeCount = 0;
+        cout << "  " << setw(3);
+        for(Node<NodeType> * nodePtr : nodesVector)
         {
-            cout << "->" << left << setw(2);
+            cout << right << nodePtr->nodeID  << setw(2);
+            if (nodeCount != nodesVector.size()-1)
+            {
+                cout << "->" << left << setw(2);
+            }
+            if ((nodeCount+1) % 20 == 0)
+            {
+                cout << endl;
+                cout << "" << setw(3);
+            }
+            
+            
+            //The total is recorded in the last node. This next line rewrites the total cost going through all nodes in path.
+            totalPathCost = nodePtr->shortestDistanceToCurrentNodeInPath;
+            nodeCount++;
         }
-        if ((nodeCount+1) % 20 == 0)
-        {
-            cout << endl;
-            cout << "" << setw(3);
-        }
-        
-        
-        //The total is recorded in the last node. This next line rewrites the total cost going through all nodes in path.
-        totalPathCost = nodePtr->shortestDistanceToCurrentNodeInPath;
-        nodeCount++;
+        cout << endl;
+        cout << "Total Path Cost: " << totalPathCost << endl;
+        cout << endl;
     }
-    cout << endl;
-    cout << "Total Path Cost: " << totalPathCost << endl;
-    cout << endl;
-}
+};
 
 #endif /* Path_hpp */

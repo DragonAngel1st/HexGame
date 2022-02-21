@@ -34,14 +34,14 @@ private:
 };
 
 template <typename NodeType>
-void MST<NodeType>::addEdge(Edge<NodeType>* ptrToEdge)
+inline void MST<NodeType>::addEdge(Edge<NodeType>* ptrToEdge)
 {
     _edges.push_back(ptrToEdge);
 }
 
 //Helper function to help find if a certain node exist using the nodeID.
 template <typename NodeType>
-bool MST<NodeType>::nodeExist(int nodeID)
+inline bool MST<NodeType>::nodeExist(int nodeID)
 {
     for (Edge<NodeType>* edgePtr : _edges)
     {
@@ -55,7 +55,7 @@ bool MST<NodeType>::nodeExist(int nodeID)
 
 //Helper function to see the MST on the console
 template <typename NodeType>
-void MST<NodeType>::print()
+inline void MST<NodeType>::print()
 {
     //Print the tree to the console if it is valid
     if (this->isValid)
@@ -78,7 +78,7 @@ void MST<NodeType>::print()
 
 //Constructor takes care of empty constructor also by setting isValid default to true.
 template <typename NodeType>
-MST<NodeType>::MST(bool isValid):isValid(isValid){}
+inline MST<NodeType>::MST(bool isValid):isValid(isValid){}
 
 
 #endif /* MST_hpp */

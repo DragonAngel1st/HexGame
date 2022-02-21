@@ -7,31 +7,63 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E08368A8-00DD-4D19-851C-1B5E4C5C97EC"
+            uuid = "4B0E2DE8-3B5F-4E6A-9960-5ED016E3D825"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Assignment 5 - AI for HexGame/AIPlayer.hpp"
+            filePath = "Assignment 5 - AI for HexGame/HexGame.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "AIPlayer"
-            landmarkType = "3">
+            startingLineNumber = "191"
+            endingLineNumber = "191"
+            landmarkName = "HexGame::_startGameLoop()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E76E3582-D90A-499C-9883-39AEAEDA5CCD"
+            uuid = "1527B3AF-954A-41D6-B705-6E2846D9EA6D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Assignment 5 - AI for HexGame/HexGame.hpp"
+            filePath = "Assignment 5 - AI for HexGame/AIPlayer.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "192"
-            endingLineNumber = "192"
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "AIPlayer::getBestNextMoveEvaluation(originalHexGameGraphPtr)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "21913E8B-EBEA-4F71-A5DA-66C2AC84DBAD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Assignment 5 - AI for HexGame/HexGame.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "HexGame::HexGame(gameSize)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0828030E-0DB3-4138-9FA4-78FE879375BE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Assignment 5 - AI for HexGame/HexGame.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
             landmarkName = "HexGame::_startGameLoop()"
             landmarkType = "7">
          </BreakpointContent>
