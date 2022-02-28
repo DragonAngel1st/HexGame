@@ -15,6 +15,7 @@
 #include "HexNodeState.hpp"
 #include "HexNode.hpp"
 #include "HexGameGraph.hpp"
+#include "HexGameHelperFunctions.hpp"
 
 
 using namespace std;
@@ -22,18 +23,19 @@ using namespace std;
 class AIPlayer
 {
 public:
-    HexNodeState playerColor;
-    AIPlayer(const HexNodeState playerColor): playerColor(playerColor){};
-    HexNode* getBestNextMoveEvaluation(HexGameGraph* originalHexGameGraphPtr);
+    int gameSize; // Size of one of the dimensions of the game. Note the game board is always square -> gameSize by gameSize.
+    int aiIterations; // Number of try the AI will full up game board to find winning move. Can thought of AI Strenght(smartness)
+    
+    AIPlayer(); // Instantiate an null player
+    AIPlayer(const int gameSize, const int aiIterations): gameSize(gameSize), aiIterations(aiIterations){}; //Create an AIPlayer
+    
+    HexNode* getPossibleWinningMove(HexGameGraph* hexGameGraphPtr, HexNodeState playerColor); //AI test for the best next move
+    
+    ~AIPlayer(); //Release resources.
 private:
-    bool _isScenarioAWin(PriorityQueue<HexNode>* pq);
-    int _getRandomNodeID(int gameSize);
+    //AI query to test if test board is a win for itself.
+    bool _isScenarioAWin(HexGameGraph* hexGameGraphPtr, HexNodeState playerColor);
+
 };
 
-//PriorityQueue<HexNode> AIPlayer::_createRandomWinningBoardFrom(HexGameGraph* _hexGraphPtr)
-//{
-////    PriorityQueue<HexNode> pq;
-////
-//    return NULL;
-//}
 #endif /* AIPlayer_hpp */

@@ -7,20 +7,22 @@
 
 #include <stdio.h>
 #include "HexGame.hpp"
-//#include "AIPlayer.hpp"
+#include "HexGameHelperFunctions.hpp"
+
+
 
 using namespace std;
 
 //IMPLEMENTATION
 //Default constructor
-inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
+HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
 {
     //Start a game
     //Implement game using a graph from assignment 3
     //All graph classes from assignment 3 have been transform to template classes.
     //_gameGraphPtr = new HexGameGraph(gameSize);
 
-    HexGameGraph* _gameGraphPtr = new HexGameGraph(gameSize);
+    _gameGraphPtr = new HexGameGraph(gameSize);
     
     //Create a new unordered map to hold the game squares coordinates to NodeID of size gameSize*gameSize.
     //Create all nodes in the graph and add their coordinates to the unordered map.
@@ -54,14 +56,14 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
                     //Create a game square with 2 edges (top left corner)
                     //EDGE 1
                     //cout << _getNodeIDFromCoordinates(rowIndex,columnIndex) << endl;
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex)) ;
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex,gameSize)) ;
                     //cout << _getNodeIDFromCoordinates(rowIndex,columnIndex+1) << endl;
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex+1,gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     
                     //EDGE 2
                     //cout << _getNodeIDFromCoordinates(rowIndex+1,columnIndex) << endl;
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex)) ;
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex+1, columnIndex,gameSize)) ;
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     
                 }
@@ -69,8 +71,8 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
                 {
                     //create a game square with 3 edges (top right corner), 2 edge are already created by previous nodes.
                     //EDGE 1
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex,gameSize));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex+1, columnIndex,gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     
                 }
@@ -78,11 +80,11 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
                 {
                     //create a game square with 4 edges. (first row of squares without corners), 3 edge are already created by previous nodes
                     //EDGE 1
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex,gameSize));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex+1,gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     //EDGE 2
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex+1, columnIndex,gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                 }
             }
@@ -93,14 +95,14 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
                 {
                     //Create a game square with 3 edges (bottom left corner), 1 edge already created by previous node
                     //EDGE 1
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex-1, columnIndex+1));
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex,gameSize));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex-1, columnIndex+1,gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     //EDGE 2
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex+1, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                 }
-                else if (columnIndex==gameSize-1)
+                else if (columnIndex == gameSize-1)
                 {
                     //create a game square with 2 edges (bottom right corner)
                     //All edges have been created by previous nodes.
@@ -109,11 +111,11 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
                 {
                     //create a game square with 4 edges. (bottom row of squares without corners), 2 edges have already been created by previous nodes.
                     //EDGE 1
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex-1, columnIndex+1));
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex, gameSize));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex-1, columnIndex+1, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     //EDGE 2
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex+1, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                 }
             }
@@ -124,22 +126,22 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
                 if (columnIndex==gameSize-1)
                 {
                     //EDGE 1
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex,gameSize));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex+1, columnIndex, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                 }
                 //Create all other squares that have 6 edges, 3 edges already been created by previous nodes.
                 else
                 {
                     //EDGE 1
-                    fromNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex,columnIndex));
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex-1, columnIndex+1));
+                    fromNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex,columnIndex, gameSize));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex-1, columnIndex+1, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     //EDGE 2
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex+1));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex+1, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                     //EDGE 3
-                    toNodePtr = _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex+1, columnIndex));
+                    toNodePtr = _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex+1, columnIndex, gameSize));
                     _gameGraphPtr->addUndirectedEdge(*fromNodePtr, *toNodePtr, 1.0);
                 }
             }
@@ -154,181 +156,233 @@ inline HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
 }
 
 //Game Loop
-inline void HexGame::_startGameLoop()
+void HexGame::_startGameLoop()
 {
-    
+    //Initialize the game and set gameOver to false.
     bool gameOver = false;
     //PRINT HEX BOARD
     _printGameBoard();
+    
     int numberHumanPlayers;
+    //Ask how many human players will play the game. You may choose from 0 to 2 human players. 2 Player is played "hot seat" fashion.
     cout << "Please enter \"1\" if you want to play single player or \"2\" for a hot seat two player game of Hex. :";
     cin >> numberHumanPlayers;
+    cout << endl;
+    //Continue asking user until we get a valid number of human players.
+    while (numberHumanPlayers < 0 || numberHumanPlayers > 2 )
+    {
+        cout << "You did not enter a number between 1 and 2. The number must be an integer: ";
+        cin >> numberHumanPlayers;
+        cout << endl;
+    }
+    //EASTER EGG - KooKoo!
+    if (numberHumanPlayers == 0) {
+        cout << endl;
+        cout << "Congratulations! You found my easter egg! Sit back and relax while artificial intelligent players compete against each other." << endl;
+        cout << endl;
+    }
+    //Ask what color the player 1 wants.
+    cout << "What color will player 1 choose? (B)lue or (R)ed? Remember, Red goes first." << endl;
+    char player1ColorChoiceInput;
+    cin >> player1ColorChoiceInput;
+    cout << endl;
+    //Set colorValide to false;
+    bool colorValide = false;
+    //While we don't have a valid color choice, request a valid color.
+    while (colorValide == false)
+    {
+        switch (player1ColorChoiceInput) {
+            case 'R': //Falls through
+            case 'r':
+            {
+                //Set color of the players
+                player1 = Player(1, HexNodeState::RED, ((numberHumanPlayers>=1) ? PlayerType::HUMAN : PlayerType::AI));
+                player2 = Player(2, HexNodeState::BLUE, ((numberHumanPlayers>=2) ? PlayerType::HUMAN : PlayerType::AI));
+                colorValide = true;
+                
+                break;
+            }
+            case 'B': //Falls through
+            case 'b':
+            {
+                //Set color of the players
+                player1 = Player(1, HexNodeState::BLUE, ((numberHumanPlayers>=1) ? PlayerType::HUMAN : PlayerType::AI));
+                player2 = Player(2, HexNodeState::RED, ((numberHumanPlayers>=2) ? PlayerType::HUMAN : PlayerType::AI));
+                colorValide = true;
+                break;
+            }
+            default:
+            {
+                // wrong character input
+                cout << "Character: " << player1ColorChoiceInput << " is not valid." << endl;
+                cout << "Please choose 'B' for Blue and 'R' for Red: ";
+                cin >> player1ColorChoiceInput;
+                break;
+            }
+        }
+    }
+    //Indicate what each player will be.
+    cout << "Player 1 will be " << HexNodeStateToString(player1.color) << " and is a " << PlayerTypeToString(player1.type)  << " player."<< endl;
+    cout << "Player 2 will be " << HexNodeStateToString(player2.color) << " and is a " << PlayerTypeToString(player2.type) << " player." << endl;
+    cout << endl;
+
+    //Initialize only one AIPlayer
+    //For a AI against AI game, the same AIPlayer can be used since it does not remember moves.
+    int aiIterations = 0;
+    if (player1.type == PlayerType::AI || player2.type == PlayerType::AI)
+    {
+        cout << "Please input number of possible boards that the AI player will try each turn. Warning! The more game boards and the bigger the game size the more the AI will take time to do it's turn. We recommend less than 5000 for a 20 by 20 game board with average AI turn time of 4.5sec. (100+): ";
+        cin >> aiIterations;
+        cout << endl;
+        aiBrain = AIPlayer(gameSize, aiIterations);
+    }
+    //Set the current player to RED player.
+    Player currentPlayer = (player1.color == HexNodeState::RED) ? player1 : player2;
+    
     //Loop while the game is not over.
-    
-    //AIPlayer* aiPlayer1 = new AIPlayer(HexNodeState::RED);
-    
     while (!gameOver)
     {
-        //FIXME: Ask player 1's color here
-        
-        //Ask first player move
-        HexNode * nodePtr = _askPlayerForCoordinates(1);
-        
-        //FIXME: update the current player pointer.
-        nodePtr->state = HexNodeState::RED;
-        
+        //Ask player 1 for a move
+        HexNode * nodePtr = _askPlayerForCoordinates(currentPlayer);
+        nodePtr->state = currentPlayer.color;
+        //Print game grid
         _printGameBoard();
-        
-        if (numberHumanPlayers != 0 && _checkIfPlayerHasWon(1, nodePtr))
+        //Check Player 1 won with this last move.
+        if (_checkIfPlayerHasWonFromLastMove(currentPlayer, nodePtr))
         {
-            _playerHasWon(1);
+            //Message that the current player has won and end the game loop.
+            _playerHasWon(currentPlayer);
             gameOver = true;
             break;
         }
-        //If playing hot seat 2 player game, ask 2nd player to enter move
-        if (numberHumanPlayers == 2)
-        {
-            nodePtr = _askPlayerForCoordinates(2);
-            nodePtr->state = HexNodeState::BLUE;
-        }
-        _printGameBoard();
-        //Here player 2 is either human or the computer, so we only check once.
-        if (_checkIfPlayerHasWon(2, nodePtr))
-        {
-            _playerHasWon(2);
-            gameOver = true;
-            break;
-        }
+        //Switch the current player to the next player. This is one of the best example of using the ternary operator "?" in c++.
+        currentPlayer = (currentPlayer==player1) ? player2 : player1;
     }
 }
 
 //Helper function to check if a player has won after each move. Since a player can only win on his last move, we don't have to check if there's a route without this last move.
-inline bool HexGame::_checkIfPlayerHasWon(int playerID, HexNode * nodePtr)
+bool HexGame::_checkIfPlayerHasWonFromLastMove(Player currentPlayer, HexNode * nodePtr)
 {
+
     //Check from current move if there is a path to other side of the board.
-    if (playerID == 1)
+    int columnIndex = 0;
+    int rowIndex = 0;
+    int opositeRowIndex = gameSize-1;
+    int opositeColumnIndex = gameSize-1;
+    //RED PLAYER Check from nodePtr to any Northern most squares (row 0) and if there is a path check from nodePtr to any South most squares (row gameSize-1), BLUE PLAYER Check from nodePtr to any Eastern most square (column 0) to Western most square (column gameSize-1) ;
+    //Get minimum spaning tree from last square entered and check that it has both a node NorternMost Square and a SouthernMost node for BLUE PLAYER and EastMost and WestMost for RED PLAYER;
+    MST<HexNode>* mst = _gameGraphPtr->getMinimumSpanningTreePRIM(nodePtr->nodeID, currentPlayer.color);
+    //Find if MST includes any of first boarder side squares
+    for (int index1=0; index1 < gameSize; index1++)
     {
-        //RED PLAYER Check from nodePtr to any Northern most squares (row 0) and if there is a path check from nodePtr to any South most squares (row gameSize-1) ;
-        
-        //Get minimum spaning tree from last square entered and check that it has both a node NorternMost Square and a SouthernMost node;
-        MST<HexNode>* mst = _gameGraphPtr->getMinimumSpanningTreePRIM(nodePtr->nodeID, nodePtr->state);
-        //Find if MST includes any of NorthernMost squares
-        for (int columnIndex=0; columnIndex < gameSize; columnIndex++)
+        // If the current player is RED, then set the rowIndex to increment or set the columIndex to increment if its the BLUE player.
+        currentPlayer.color == HexNodeState::RED ? (columnIndex = index1) : (rowIndex = index1);
+        //Check sqaures to East or North boarders if the square exist in the MST if so check that the tree contains also a node to the oposite end.
+        if (mst->nodeExist(GetNodeIDFromCoordinates(rowIndex, columnIndex, gameSize)))
         {
-            //We check to see if there is a minimum spanning tree from current move to any boarder square at top and if so we then check if there is a minimum spanning tree from current move to the bottom board squares.
-            if (mst->nodeExist(_getNodeIDFromCoordinates(0, columnIndex)))
+            //Find if MST also includes any of the oposite side squares by iterating through possible squares.
+            for (int index2=0; index2 < gameSize; index2++)
             {
-                //A MST exist to a top board square, now test for a MST to bottom boarder squares
-                for (int columnIndex=0; columnIndex < gameSize; columnIndex++)
+                //Set opositeRowIndex to increment if color of player is RED or set opositeColumnIndex to increment if the player color is BLUE. (Vice-versa)
+                currentPlayer.color == HexNodeState::RED ? ({opositeColumnIndex = index2;}) : ({opositeRowIndex = index2;});
+                //Only If we have an MST from current square move to both side of the boarders we return true. Here we return early to reduce the work load since we only need to know if we connect both sides of the game board.
+                if(mst->nodeExist(GetNodeIDFromCoordinates(opositeRowIndex, opositeColumnIndex, gameSize)) && _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(opositeRowIndex, opositeColumnIndex, gameSize))->state == currentPlayer.color)
                 {
-                    //We only return true if there is also a MST from current square played to top and botom boarders.
-                    if(mst->nodeExist(_getNodeIDFromCoordinates(gameSize-1, columnIndex)))
-                    {
-                        //We could get the shortestPath algorithm to return the wining path and highlight all the winning squares on the board here.
-                        return true;
-                        
-                    }
+                    //We could get the shortestPath algorithm to return the wining path and highlight all the winning squares on the board here. Warning!!! To change the command window colors seems to be something C++ still strugles for platform independency.
+                    delete mst;
+                    //Return true to caller
+                    return true;
+                    
                 }
             }
         }
     }
-    //Here the test for player 2 is the same as player 1 except that we check for an MST to East boarder and West boarder
-    else
+    if (mst != nullptr)
     {
-        //BLUE PLAYER Check from nodePtr to any Northern most squares (row 0) and if there is a path check from nodePtr to any South most squares (row gameSize-1) ;
-        //Get minimum spaning tree from last square entered and check that it has both a node NorternMost Square and a SouthernMost node;
-        MST<HexNode>* mst = _gameGraphPtr->getMinimumSpanningTreePRIM(nodePtr->nodeID, nodePtr->state);
-        //Find if MST includes any of NorthernMost squares
-        for (int rowIndex=0; rowIndex < gameSize; rowIndex++)
-        {
-            //Check form current square played to East boarder squares
-            if (mst->nodeExist(_getNodeIDFromCoordinates(rowIndex, 0)))
-            {
-                for (int rowIndex=0; rowIndex < gameSize; rowIndex++)
-                {
-                    //Only If we have an MST from current square move to both side of the boarders we return true.
-                    if(mst->nodeExist(_getNodeIDFromCoordinates(rowIndex, gameSize-1)))
-                    {
-                        //We could get the shortestPath algorithm to return the wining path and highlight all the winning squares on the board here.
-                        return true;
-                        
-                    }
-                }
-            }
-        }
+        delete mst;
     }
     return false;
 }
 
 //Indicate to the console which player has wone.
-inline void HexGame::_playerHasWon(int playerID)
+void HexGame::_playerHasWon(Player currentPlayer)
 {
-    cout << "Congratulations, Player " << playerID << " you have won the game!" << endl;
-    cout << "Good luck next time, Player "  << playerID << " !" << endl;
+    cout << "Congratulations Player " << currentPlayer.ID << " you have won the game!" << endl;
+    cout << "Good luck next time Player "  << ((currentPlayer == player1) ? player2 : player1).ID << "..." << endl;
 }
 
 //Helper function to ask the current player the coordinates they want to move a token to.
-inline HexNode * HexGame::_askPlayerForCoordinates(int playerID)
+HexNode * HexGame::_askPlayerForCoordinates(Player currentPlayer)
 {
-    //Initialize row and column to -1 because 0 in this case would be a valid choice
-    int rowIndex=-1, columnIndex=-1;
-    //Initialize bool variable a default values.
-    bool coordinatesAreValid = false;
-    bool gameSquareOccupied = false;
-    //Initialize the color string variable to "None". We will never see the default value on the screen, this is just for arbitrary debugging.
-    string playerColor("None");
-    //player 1 is always Red and player 2 is alway Blue.
-    if (playerID == 1)
-    {
-        playerColor = "RED";
-    }
-    else
-    {
-        playerColor = "BLUE";
-    }
-    cout << endl;
-    //Prompt user for info.
-    cout << "Player " << playerID << " : " << "(" << playerColor << ")" << endl;
-    cout << " Please enter coordinates for your next move." << endl;
-    cout << "row #: ";
-    cin >> rowIndex;
-    cout << endl;
-    cout << "column #: ";
-    cin >> columnIndex;
-    cout << "Verifying if (" << rowIndex << ", " << columnIndex << ") is a valid location." << endl;
-    //Verify if coordinates are valid and if the game square is occupied.
-    coordinatesAreValid = _verifyCoordinates(rowIndex, columnIndex);
-    gameSquareOccupied = _isGameSquareOccupied(rowIndex, columnIndex);
-    //We enter the while loop only when the choice of game square is invalid or occupied.
-    //We keep asking for valid coordinates until they are and that the square is not occupied.
-    while (!coordinatesAreValid || (gameSquareOccupied))
-    {
-        //Prompt user for valid cordinates and help them out a bit more depending on validity
-        if (!coordinatesAreValid)
+    switch (currentPlayer.type) {
+        case PlayerType::HUMAN :
         {
-            cout << "You did not enter valid coordinates for you next move. Please enter a row integer then press Enter, then enter a column integer and press Enter again. No other format or characters are accepted." << endl;
+            //Initialize row and column to -1 because 0 in this case would be a valid choice
+            int rowIndex=-1, columnIndex=-1;
+            //Initialize bool variable a default values.
+            bool coordinatesAreValid = false;
+            bool gameSquareOccupied = false;
+            //Initialize the color string variable to "None". We will never see the default value on the screen, this is just for arbitrary debugging.
+            
+            cout << endl;
+            //Prompt user for info.
+            cout << "Player " << currentPlayer.ID << " : " << "(" << HexNodeStateToString(currentPlayer.color) << ")" << endl;
+            cout << " Please enter coordinates for your next move." << endl;
+            cout << "row #: ";
+            cin >> rowIndex;
+            cout << endl;
+            cout << "column #: ";
+            cin >> columnIndex;
+            cout << "Verifying if (" << rowIndex << ", " << columnIndex << ") is a valid location." << endl;
+            //Verify if coordinates are valid and if the game square is occupied.
+            coordinatesAreValid = _verifyCoordinates(rowIndex, columnIndex);
+            if (coordinatesAreValid)
+            {
+                gameSquareOccupied = _isGameSquareOccupied(rowIndex, columnIndex);
+            }
+            //We enter the while loop only when the choice of game square is invalid or occupied.
+            //We keep asking for valid coordinates until they are and that the square is not occupied.
+            while (!coordinatesAreValid || (gameSquareOccupied))
+            {
+                //Prompt user for valid cordinates and help them out a bit more depending on validity
+                if (!coordinatesAreValid)
+                {
+                    cout << "You did not enter valid coordinates for you next move. Please enter a row integer then press Enter, then enter a column integer and press Enter again. No other format or characters are accepted." << endl;
+                }
+                else if (gameSquareOccupied)
+                {
+                    cout << "This is an illegal move. There is already a token at that location. Please enter a row integer then press Enter, then enter a column integer and press Enter again. No other format or characters are accepted." << endl;
+                }
+                cout << "row #: ";
+                cin >> rowIndex;
+                cout << endl;
+                cout << "column #: ";
+                cin >> columnIndex;
+                cout << "Verifying if (" << rowIndex << ", " << columnIndex << ") is a valid location." << endl;
+                //Verification of valid coordinates inside the while loop.
+                coordinatesAreValid = _verifyCoordinates(rowIndex, columnIndex);
+                gameSquareOccupied = _isGameSquareOccupied(rowIndex, columnIndex);
+            }
+            //If we get to this point, we have a free and valid square, return this node.
+            return _gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex, gameSize));
+            break;
         }
-        else if (gameSquareOccupied)
+        case PlayerType::AI :
         {
-            cout << "This is an illegal move. There is already a token at that location. Please enter a row integer then press Enter, then enter a column integer and press Enter again. No other format or characters are accepted." << endl;
+            //If AI player has not been instantiated, do this here.
+            return aiBrain.getPossibleWinningMove(_gameGraphPtr, currentPlayer.color);
+            break;
         }
-        cout << "row #: ";
-        cin >> rowIndex;
-        cout << endl;
-        cout << "column #: ";
-        cin >> columnIndex;
-        cout << "Verifying if (" << rowIndex << ", " << columnIndex << ") is a valid location." << endl;
-        //Verification of valid coordinates inside the while loop.
-        coordinatesAreValid = _verifyCoordinates(rowIndex, columnIndex);
-        gameSquareOccupied = _isGameSquareOccupied(rowIndex, columnIndex);
+        default:
+            break;
     }
-    //If we get to this point, we have a free and valid square, return this node.
-    return _gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex));
+
+
     
 }
 
 //Helper function to verify if the coordinates chosen are valid. Return true if valid.
-inline bool HexGame::_verifyCoordinates(int rowIndex, int columnIndex)
+bool HexGame::_verifyCoordinates(int rowIndex, int columnIndex)
 {
     if (rowIndex >= 0 && rowIndex < gameSize && columnIndex >= 0 && columnIndex < gameSize)
     {
@@ -338,133 +392,27 @@ inline bool HexGame::_verifyCoordinates(int rowIndex, int columnIndex)
 }
 
 //Helper function to check if the chosen game square is occupied or not.
-inline bool HexGame::_isGameSquareOccupied(int rowIndex, int columnIndex)
+bool HexGame::_isGameSquareOccupied(int rowIndex, int columnIndex)
 {
     //HexNode * nodePtr = (HexNode *)(_gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex)));
-    if ( static_cast<HexNode*>(_gameGraphPtr->getNodePtr(_getNodeIDFromCoordinates(rowIndex, columnIndex)))->state == HexNodeState::UNOCCUPIED)
+    if ( static_cast<HexNode*>(_gameGraphPtr->getNodePtr(GetNodeIDFromCoordinates(rowIndex, columnIndex, gameSize)))->state == HexNodeState::UNOCCUPIED)
     {
         return false;
     }
     return true;
 }
 
-//Helper function to get the nodeID from square coodinates on the game board.
-inline int HexGame::_getNodeIDFromCoordinates(int row,int col)
-{
-    //We make sure that the row and column are valid
-    if (col != gameSize && row != gameSize)
-    {
-        //Return the row number multiplied by the game board size plus the column number.
-        //THis is base on the fact that columns and rows go from 0 to gameSize-1.
-        return (row*gameSize+col);
-    }
-    else
-    {
-        cout << "ERROR - ROW or COL OUTSIDE OF RANGE in _getNodePtrFromCoordinates" << endl;
-    }
-    return -1;
-}
-inline tuple<int, int> HexGame::_getCoordinatesFromNodeID(int nodeID)
-{
-    return make_tuple(nodeID/gameSize, nodeID%gameSize);
-}
 
-//Helper function that print's the board game to the console window.
-/*
- Example 5x5 board:
- . - . - . - . - .
- \ / \ / \ / \ / \
- . - . - . - . - .
- \ / \ / \ / \ / \
- . - . - . - . - .
- \ / \ / \ / \ / \
- . - . - . - . - .
- \ / \ / \ / \ / \
- . - . - . - . - .
- */
-inline void HexGame::_printGameBoard()
+
+
+//Helper function that calls the global function PrintGameBoard that prints the board game to the console window. See HexGameHelperFunctions.hpp file for more info.
+void HexGame::_printGameBoard()
 {
-    cout << endl;
-    int currentNodeID = 0;
-    int realRowCount = 0;
-    //loop through all the rows in the game board
-    for (int rowIndex = 0; rowIndex<gameSize ; rowIndex++)
-    {
-        //Indent the row by the number of the row count + 1 space
-        cout << right << setw(realRowCount+1);
-        //Increment the row count. This could be done at the end of the row but no other code bellow uses realRowCount.
-        realRowCount++;
-        //Loop through all columns in the game board.
-        for (int columnIndex=0 ; columnIndex<gameSize*1 ; columnIndex++)
-        {
-            // Assertion test to make sure we do not print more nodes then they are squares in the game.
-            // This type of assertion does not crash the game
-            if (currentNodeID >= gameSize*gameSize)
-            {
-                break;
-            }
-            // Determine the current node type, A node can be "." for unoccupied nodes, B for Blue occupied nodes and R for Red occupied nodes.
-            switch ( (static_cast<HexNode*>(_gameGraphPtr->getNodePtr(currentNodeID)))->state ) {
-                case HexNodeState::BLUE:
-                    cout << "B";
-                    break;
-                case HexNodeState::RED:
-                    cout << "R";
-                    break;
-                case HexNodeState::UNOCCUPIED:
-                    cout << ".";
-                    break;
-                default:
-                    cout << "ERROR";
-            }
-            //Space after each character.
-            cout << " ";
-            //If we are at a node that has a following node, print a "-".
-            if (columnIndex < gameSize-1)
-            {
-                cout << "-";
-            }
-            //Space after each character.
-            cout << " ";
-            //If we are at the end of the node make a carriage return.
-            if (currentNodeID % gameSize == gameSize-1)
-            {
-                cout << endl;
-            }
-            //Increment the currentNodeID (acts like a node count)
-            currentNodeID++;
-        }
-        
-        cout << right << setw(realRowCount+3);
-        realRowCount++;
-        //For every pair lines only, print the sequence of edges from above-left "\" and above-right node "/".
-        //Since we are still in the same iteration for the row and we printed a whole row in the first column loop, we can go ahead and fill a whole row for edges only except if we are passed the final row of nodes
-        if (rowIndex < gameSize-1){
-            //Loop through all columns
-            for (int columnIndex=0 ; columnIndex<gameSize*1 ; columnIndex++)
-            {
-                //If we are not at the end of the row print "\" and "/" with one space in between.
-                if (columnIndex < gameSize-1)
-                {
-                    //Note, we must use a escaping \ to print the "\".
-                    cout << "\\ /";
-                }
-                else
-                {
-                    //If we are at the last column, do not print the "/" character, only the "\"
-                    cout << "\\";
-                }
-                //Space after each character.
-                cout << " ";
-            }
-            
-        }
-        cout << endl;
-    }
+    PrintGameBoard(_gameGraphPtr, gameSize);
 }
 
 //Deconstructor for the HexGame object to make sure
-inline HexGame::~HexGame()
+HexGame::~HexGame()
 {
     //Delete the object pointed by this pointer
     delete _gameGraphPtr;

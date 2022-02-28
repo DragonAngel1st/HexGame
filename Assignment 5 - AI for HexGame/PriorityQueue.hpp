@@ -76,10 +76,11 @@ inline PriorityQueue<NodeType>::PriorityQueue()
 template <typename NodeType>
 inline void PriorityQueue<NodeType>::sortByShortestPath()
 {
-    sort(_ptrToPriorityQueue->begin(),_ptrToPriorityQueue->end(), [](const Node<NodeType> * lhs, const Node<NodeType> * rhs){
+    sort(_ptrToPriorityQueue->begin(),_ptrToPriorityQueue->end(), [](const NodeType* lhs, const NodeType* rhs){
         return lhs->shortestDistanceToCurrentNodeInPath < rhs->shortestDistanceToCurrentNodeInPath;
     });
 }
+
 
 // Public function to access local members and prevent unwanted use.
 // Returns a node ptr that cannot be changed by caller.

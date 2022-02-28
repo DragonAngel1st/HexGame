@@ -36,22 +36,13 @@ public:
 
     Edge<NodeType> * ptrToEdgeWithShortestDistance;
     
-    //Here the empty node constructor is not needed since the nodeID is default to 0 in the next constructor signature and the compiler will automatically use it for no parameter.
-    //    Node():nodeID(0) //All nodes must be created with an ID, if using the empty parameter constructor, remember to update the node ID after.
-    //    {
-    //        // For evaluation purpouses, and program pathing, it's better to instantiate empty vector of neighbor nodes or edges instead of dealing with an null pointer.
-    //        ptrToVectorDirectedEdges = new vector<Edge*>;
-    //        ptrToVectorOfNeighborPtrs = new vector<Node*>;
-    //    }
-
     // The self construction of the Graph is only using this node constructor.
     Node<NodeType>(int nodeName=0);
     
     //Copy CONSTRUCTOR
     Node<NodeType>(const NodeType &node);
     // For evaluating the order of the nodes. The node with the current shortest distance to it is the one that comes first.
-//    void * operator new(size_t size);
-//    void operator delete(void * memory, size_t size) noexcept;
+
     bool operator>(const NodeType& other) const;
     bool operator<(const NodeType& other) const;
     bool operator==(const NodeType& other) const;

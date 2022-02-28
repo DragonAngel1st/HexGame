@@ -34,6 +34,8 @@ public:
         nodesVector.push_back(ptrToStartNode);
     }
     
+    Path& operator=(const Path&& other){return this;};
+    
     // Public function for Adding a node ptr to the path
     void addNode(Node<NodeType> * ptrToNewNode)
     {

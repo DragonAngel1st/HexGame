@@ -14,4 +14,16 @@ enum class HexNodeState
 {
     UNOCCUPIED, RED, BLUE
 };
+//This next constant expression is to enable printing the enum as text during debugging.
+constexpr const char* HexNodeStateToString(HexNodeState state) throw()
+{
+    switch (state)
+    {
+        case HexNodeState::UNOCCUPIED: return "Unoccupied";
+        case HexNodeState::RED: return "Red";
+        case HexNodeState::BLUE: return "Blue";
+        default: throw std::invalid_argument("Unimplemented item");
+    }
+}
+
 #endif /* HexNodeState_hpp */

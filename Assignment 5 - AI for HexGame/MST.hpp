@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <iostream>
 
+
 using namespace std;
 
 //Minimum spanning tree. "As a collection of edges"
@@ -21,64 +22,44 @@ class MST
 {
 public:
     bool isValid; // This is a flag to know if the minimum spanning tree created is valid and used all nodes in the graph.
-    void addEdge(Edge<NodeType>* ptrToEdge);
     
-    bool nodeExist(int nodeID);
+    void addEdge(Edge<NodeType>* ptrToEdge)
+    {
+        _edges.push_back(ptrToEdge);
+    }
+    
+    bool nodeExist(int nodeID)
+    {
+        for (Edge<NodeType>* edgePtr : _edges)
+        {
+            if (edgePtr->fromNodeID==nodeID || edgePtr->toNodeID==nodeID)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     
     //Helper function to see the MST on the console
-    void print();
+    void print()
+    {
+        {
+            int totalWeightOfTree =0;
+            cout << "~";
+            for (auto edge : _edges)
+            {
+                cout << "Edge " <<edge->fromNodePtr->nodeID  << "<->" << edge->toNodePtr->nodeID << "(" << edge->cost << "), ";
+                totalWeightOfTree += edge->cost;
+            }
+            cout << endl;
+            //cout << "The total edge cost is: " << totalWeightOfTree << endl;
+        }
+    }
     //Constructor takes care of empty constructor also by setting isValid default to true.
-    MST(bool isValid = true);
+    MST(bool isValid):isValid(isValid=true){}
+    MST& operator=(const MST&& other){return this;};
 private:
     vector<Edge<NodeType>*> _edges; // hidden vector of edges for the MST
 };
-
-template <typename NodeType>
-inline void MST<NodeType>::addEdge(Edge<NodeType>* ptrToEdge)
-{
-    _edges.push_back(ptrToEdge);
-}
-
-//Helper function to help find if a certain node exist using the nodeID.
-template <typename NodeType>
-inline bool MST<NodeType>::nodeExist(int nodeID)
-{
-    for (Edge<NodeType>* edgePtr : _edges)
-    {
-        if (edgePtr->fromNodeID==nodeID || edgePtr->toNodeID==nodeID)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-//Helper function to see the MST on the console
-template <typename NodeType>
-inline void MST<NodeType>::print()
-{
-    //Print the tree to the console if it is valid
-    if (this->isValid)
-    {
-        int totalWeightOfTree =0;
-        cout << "~";
-        for (auto edge : _edges)
-        {
-            cout << "Edge " << edge->fromNodePtr->nodeID << "<->" << edge->toNodePtr->nodeID << "(" << edge->cost << "), ";
-            totalWeightOfTree += edge->cost;
-        }
-        cout << endl;
-        cout << "The total edge cost is: " << totalWeightOfTree << endl;
-    }
-    else
-    {
-        cout << "THE GRAPH IS UNCONNECTED AND DOES NOT HAVE A MINIMUM SPANNING TREE." << endl;
-    }
-}
-
-//Constructor takes care of empty constructor also by setting isValid default to true.
-template <typename NodeType>
-inline MST<NodeType>::MST(bool isValid):isValid(isValid){}
-
 
 #endif /* MST_hpp */

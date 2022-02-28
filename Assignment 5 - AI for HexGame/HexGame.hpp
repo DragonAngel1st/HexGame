@@ -11,7 +11,9 @@
 #include <stdio.h>
 #include <tuple>
 #include "HexGameGraph.hpp"
-
+#include "Player.hpp"
+#include "PlayerType.hpp"
+#include "AIPlayer.hpp"
 
 using namespace std;
 
@@ -22,18 +24,22 @@ class HexGame
 public:
     bool isActive;
     int gameSize;
+    Player player1;
+    Player player2;
+    AIPlayer aiBrain;
     //Start a game
     HexGame(int gameSize = 5);
     ~HexGame();
+    bool _checkIfPlayerHasWonFromLastMove(Player currentPlayer, HexNode * nodePtr);
 private:
     HexGameGraph * _gameGraphPtr;
     void _startGameLoop();
     bool _verifyCoordinates(int row, int col);
     bool _isGameSquareOccupied(int row, int col);
-    HexNode * _askPlayerForCoordinates(int playerID);
-    bool _checkIfPlayerHasWon(int playerID, HexNode * nodePtr);
-    void _playerHasWon(int playerID);
-    int _getNodeIDFromCoordinates(int row,int col);
+    HexNode * _askPlayerForCoordinates(Player currentPlayer);
+    
+    void _playerHasWon(Player currentPlayer);
+    
     void _printGameBoard();
     void _printTitle();
     tuple<int, int> _getCoordinatesFromNodeID(int nodeID);

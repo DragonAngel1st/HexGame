@@ -23,12 +23,15 @@ class Edge;
 class HexNode: public Node<HexNode>
 {
 public:
+    //If node was created to test for a winning solution, tag it true;
+    bool isAITest = false;
     //Set the node state to default to Unoccupied.
     HexNodeState state = HexNodeState::UNOCCUPIED;
     //Set move score to 0. This variable is used by AI to evaluate best potential moves.
     int moveScore = 0;
     //Default constructor
     HexNode(int nodeName=0);
+    
 private:
     
 };

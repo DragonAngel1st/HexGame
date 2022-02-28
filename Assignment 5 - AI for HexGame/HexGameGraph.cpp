@@ -8,10 +8,11 @@
 #include <stdio.h>
 #include "HexGameGraph.hpp"
 
-inline HexGameGraph::HexGameGraph(int gameSize): Graph<HexNode>{gameSize*gameSize}{};
+HexGameGraph::HexGameGraph(int gameSize): Graph<HexNode>{gameSize*gameSize}{};
 
-inline MST<HexNode>* HexGameGraph::getMinimumSpanningTreePRIM(int startingNodeID, HexNodeState state)
+MST<HexNode>* HexGameGraph::getMinimumSpanningTreePRIM(int startingNodeID, HexNodeState state)
 {
+    if (getNodePtr(startingNodeID)->state != state) {return nullptr;};
     //Create the tree
     MST<HexNode>* minimumSpanningTree = new MST<HexNode>(true);
     //Create a priority queue for all unvisited nodes
@@ -63,9 +64,10 @@ inline MST<HexNode>* HexGameGraph::getMinimumSpanningTreePRIM(int startingNodeID
         //We also set the valid flag on the MST to be false.
         if (ptrToCurrentNode->shortestDistanceToCurrentNodeInPath == INFINITY)
         {
-            cout << "Warning - There are still unvisited nodes but the graph is broken (incomplete)" << endl;
-            //Note that all MSTs are initialized with true as the isValid flag.
-            minimumSpanningTree->isValid = false;
+            //The bellow commented code was for debug purpouse only and is not applicable for HexGameGraph objects.
+                //cout << "Warning - There are still unvisited nodes but the graph is broken (incomplete)" << endl;
+                //Note that all MSTs are initialized with true as the isValid flag.
+                //minimumSpanningTree->isValid = false;
             break;
         }
         //Add the edge with the smallest cost of the current node.
@@ -77,7 +79,7 @@ inline MST<HexNode>* HexGameGraph::getMinimumSpanningTreePRIM(int startingNodeID
     return minimumSpanningTree;
 }
 
-inline Path<HexNode>* HexGameGraph::getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState)
+Path<HexNode>* HexGameGraph::getShortestPath(HexNode * ptrToStartNode, HexNode * ptrToEndNode, HexNodeState nodeState)
 {
     // My class Path is a vector of nodes and only assigns starting node when initializing with
     // 0.0 as it's Node.shortestDistanceToCurrentNodeInPath as a double.
@@ -191,11 +193,12 @@ inline Path<HexNode>* HexGameGraph::getShortestPath(HexNode * ptrToStartNode, He
                     }
                     iterationCount++;
                     //Exit current loop early
-                    continue;
+                    //continue;
                 }
                 else
                 {
-                    cout << "---- THE GRAPH IS UNCONNECTED ----" << endl;
+                    //For debug only
+                    //cout << "---- THE GRAPH IS UNCONNECTED ----" << endl;
                     return NULL;
                 }
                 // Add the ptr to shortest edge node of the neighbor to the shortest path.
@@ -222,13 +225,28 @@ inline Path<HexNode>* HexGameGraph::getShortestPath(HexNode * ptrToStartNode, He
                 return shortestVisitedPath;
             }
             // If our ptr to current node has not been set to next node or has been set to nullptr, exit shortest path function and return the current shortest path, there are no more nodes left in the unvisited queue.
+            //Heap cleanup
             if (ptrToCurrentNode == nullptr)
             {
+                delete ptrToEndNode;
+                delete ptrToStartNode;
+                delete ptrToCurrentNode;
+                delete ptrToShortestEdgeNode;
                 return shortestVisitedPath;
             }
             iterationCount++;
         }
+        //Heap cleanup
+        ptrToEndNode = nullptr;
+        delete ptrToEndNode;
+        ptrToStartNode = nullptr;
+        delete ptrToStartNode;
+        delete ptrToCurrentNode;
+        delete ptrToShortestEdgeNode;
         return shortestVisitedPath;
     }
+    //Heap cleanup
+    delete ptrToEndNode;
+    delete ptrToStartNode;
     return NULL;
 }
