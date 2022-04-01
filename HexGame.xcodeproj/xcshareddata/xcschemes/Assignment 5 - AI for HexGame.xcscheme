@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "393F75E227BADDCF00F49866"
                BuildableName = "Assignment 5 - AI for HexGame"
-               BlueprintName = "Assignment 5 - AI for HexGame"
-               ReferencedContainer = "container:Assignment 5 - AI for HexGame.xcodeproj">
+               BlueprintName = "HexGame"
+               ReferencedContainer = "container:HexGame.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,8 +46,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "393F75E227BADDCF00F49866"
             BuildableName = "Assignment 5 - AI for HexGame"
-            BlueprintName = "Assignment 5 - AI for HexGame"
-            ReferencedContainer = "container:Assignment 5 - AI for HexGame.xcodeproj">
+            BlueprintName = "HexGame"
+            ReferencedContainer = "container:HexGame.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -63,8 +63,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "393F75E227BADDCF00F49866"
             BuildableName = "Assignment 5 - AI for HexGame"
-            BlueprintName = "Assignment 5 - AI for HexGame"
-            ReferencedContainer = "container:Assignment 5 - AI for HexGame.xcodeproj">
+            BlueprintName = "HexGame"
+            ReferencedContainer = "container:HexGame.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

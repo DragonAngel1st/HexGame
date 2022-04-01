@@ -27,7 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		393F75E327BADDCF00F49866 /* Assignment 5 - AI for HexGame */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Assignment 5 - AI for HexGame"; sourceTree = BUILT_PRODUCTS_DIR; };
+		393F75E327BADDCF00F49866 /* HexGame */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HexGame; sourceTree = BUILT_PRODUCTS_DIR; };
 		397C137F27CD78DC001AE1C2 /* HexNodeState.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HexNodeState.hpp; sourceTree = "<group>"; };
 		397C138027CD78DC001AE1C2 /* HexNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HexNode.hpp; sourceTree = "<group>"; };
 		397C138127CD78DC001AE1C2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -64,7 +64,7 @@
 		393F75DA27BADDCF00F49866 = {
 			isa = PBXGroup;
 			children = (
-				393F75E527BADDCF00F49866 /* Assignment 5 - AI for HexGame */,
+				393F75E527BADDCF00F49866 /* HexGame */,
 				393F75E427BADDCF00F49866 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -72,12 +72,12 @@
 		393F75E427BADDCF00F49866 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				393F75E327BADDCF00F49866 /* Assignment 5 - AI for HexGame */,
+				393F75E327BADDCF00F49866 /* HexGame */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		393F75E527BADDCF00F49866 /* Assignment 5 - AI for HexGame */ = {
+		393F75E527BADDCF00F49866 /* HexGame */ = {
 			isa = PBXGroup;
 			children = (
 				397C138F27CD78DD001AE1C2 /* AIPlayer.cpp */,
@@ -101,15 +101,15 @@
 				397C139227CD78DD001AE1C2 /* PlayerType.hpp */,
 				397C138727CD78DD001AE1C2 /* PriorityQueue.hpp */,
 			);
-			path = "Assignment 5 - AI for HexGame";
+			path = HexGame;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		393F75E227BADDCF00F49866 /* Assignment 5 - AI for HexGame */ = {
+		393F75E227BADDCF00F49866 /* HexGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 393F75EA27BADDCF00F49866 /* Build configuration list for PBXNativeTarget "Assignment 5 - AI for HexGame" */;
+			buildConfigurationList = 393F75EA27BADDCF00F49866 /* Build configuration list for PBXNativeTarget "HexGame" */;
 			buildPhases = (
 				393F75DF27BADDCF00F49866 /* Sources */,
 				393F75E027BADDCF00F49866 /* Frameworks */,
@@ -119,9 +119,9 @@
 			);
 			dependencies = (
 			);
-			name = "Assignment 5 - AI for HexGame";
+			name = HexGame;
 			productName = "Assignment 5 - AI for HexGame";
-			productReference = 393F75E327BADDCF00F49866 /* Assignment 5 - AI for HexGame */;
+			productReference = 393F75E327BADDCF00F49866 /* HexGame */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -138,7 +138,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 393F75DE27BADDCF00F49866 /* Build configuration list for PBXProject "Assignment 5 - AI for HexGame" */;
+			buildConfigurationList = 393F75DE27BADDCF00F49866 /* Build configuration list for PBXProject "HexGame" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -151,7 +151,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				393F75E227BADDCF00F49866 /* Assignment 5 - AI for HexGame */,
+				393F75E227BADDCF00F49866 /* HexGame */,
 			);
 		};
 /* End PBXProject section */
@@ -312,7 +312,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		393F75DE27BADDCF00F49866 /* Build configuration list for PBXProject "Assignment 5 - AI for HexGame" */ = {
+		393F75DE27BADDCF00F49866 /* Build configuration list for PBXProject "HexGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				393F75E827BADDCF00F49866 /* Debug */,
@@ -321,7 +321,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		393F75EA27BADDCF00F49866 /* Build configuration list for PBXNativeTarget "Assignment 5 - AI for HexGame" */ = {
+		393F75EA27BADDCF00F49866 /* Build configuration list for PBXNativeTarget "HexGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				393F75EB27BADDCF00F49866 /* Debug */,
