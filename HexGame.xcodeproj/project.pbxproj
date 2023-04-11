@@ -32,7 +32,7 @@
 		397C138027CD78DC001AE1C2 /* HexNode.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HexNode.hpp; sourceTree = "<group>"; };
 		397C138127CD78DC001AE1C2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		397C138227CD78DC001AE1C2 /* Player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Player.cpp; sourceTree = "<group>"; };
-		397C138327CD78DD001AE1C2 /* HexGameByPatrickMiron_FinalAssignmt.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HexGameByPatrickMiron_FinalAssignmt.txt; sourceTree = "<group>"; };
+		397C138327CD78DD001AE1C2 /* HexGameByPatrickMiron.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HexGameByPatrickMiron.txt; sourceTree = "<group>"; };
 		397C138427CD78DD001AE1C2 /* Edge.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Edge.hpp; sourceTree = "<group>"; };
 		397C138527CD78DD001AE1C2 /* HexGameGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HexGameGraph.cpp; sourceTree = "<group>"; };
 		397C138627CD78DD001AE1C2 /* Path.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Path.hpp; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 				397C138C27CD78DD001AE1C2 /* Graph.hpp */,
 				397C139127CD78DD001AE1C2 /* HexGame.cpp */,
 				397C138D27CD78DD001AE1C2 /* HexGame.hpp */,
-				397C138327CD78DD001AE1C2 /* HexGameByPatrickMiron_FinalAssignmt.txt */,
+				397C138327CD78DD001AE1C2 /* HexGameByPatrickMiron.txt */,
 				397C138527CD78DD001AE1C2 /* HexGameGraph.cpp */,
 				397C138827CD78DD001AE1C2 /* HexGameGraph.hpp */,
 				397C138B27CD78DD001AE1C2 /* HexGameHelperFunctions.hpp */,

@@ -1,6 +1,6 @@
 //
 //  AIPlayer.cpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-16.
 //
@@ -27,7 +27,7 @@ HexNode* AIPlayer::getPossibleWinningMove(HexGameGraph* originalHexGameGraphPtr,
     for (int epoch = 0 ; epoch < aiIterations ; epoch++ )
     {
         //Here we create vectors of integer, the integer being the nodeID
-        //The reason we use simple vectors it's much faster to work with just the nodeID without the extra space and copy time of a Node or Node pointer and we do not need anything else to assign a certain square color to a space (Node).
+        //The reason we use simple vectors is because it's much faster to work with just the nodeID without the extra space and copy time of a Node or Node pointer and we do not need anything else to assign a certain square color to a space (Node).
         vector<int> vectorOfUnoccupiedNodes;
         vector<int> vectorOfOwnedSquares;
         vector<int> vectorOfOpponentSquares;
@@ -94,7 +94,7 @@ HexNode* AIPlayer::getPossibleWinningMove(HexGameGraph* originalHexGameGraphPtr,
             currentNodePtr->isAITest = true;
             nodeCount++;
         }
-        //Verify is this scenario (full board) is a Win scenario for the current player. Add the start node as a winning node in a map (mapOfNextMoveWinningNodes) with the node ID as the index.
+        //Verify is this scenario (full board) a Win scenario for the current player. Add the start node as a winning node in a map (mapOfNextMoveWinningNodes) with the node ID as the index.
         if (_isScenarioAWin(originalHexGameGraphPtr, playerColor))
         {
             //Add this node to map of possible wining moves nodes

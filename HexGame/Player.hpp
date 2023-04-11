@@ -1,6 +1,6 @@
 //
 //  Player.hpp
-//  CPP_testing
+//  HexGame
 //
 //  Created by Patrick Miron on 2022-02-23.
 //

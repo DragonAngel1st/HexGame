@@ -1,6 +1,6 @@
 //
 //  PriorityQueue.hpp
-//  Part B - Assignment 4 - Hex Game
+//  HexGame
 //
 //  Created then Modified by Patrick Miron on 2022-01-25.
 //

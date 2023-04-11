@@ -4,10 +4,10 @@
 //
 //  Created then Modified by Patrick Miron on 2022-02-28.
 //
-// NOTE TO THE READER : The Node,Edge,Graph,PriorityQueue,and MST classes were created in previous assignments, these were modified to become template class so they can be used just like a vector<Type> class. The new typename used is NodeType and is use like so Node<NodeType> or Edge<NodeType> ect. Please node that this task was not required but I wanted to learn generic template programing and polymorphism.
+// NOTE TO THE READER : The Node,Edge,Graph,PriorityQueue,and MST classes were created in previous projects, these were modified to become template class so they can be used just like a vector<Type> class. The new typename used is NodeType and is use like so Node<NodeType> or Edge<NodeType> ect. Please node that this task was not required but I wanted to learn generic template programing and polymorphism.
 //  The game of hex was implemented in HexGame.hpp and is instantiated here in the main file.
 //  A HexNode superclass was made from the Node<HexNode> class and a superclass HexGameGraph from the Graph<HexNode> base type was create to override functions of their base classes or to add data variables to support the game.
-//  In this text file all files are merged into one to enable us to put up all program in the assignment text file as required. See bellow.
+//  In this text file all files are merged into one to enable us to put up all program in the project text file as required. See bellow.
 // As per required, the game hex program :
 //   1-AIPlayer generates random moves on the game board using Monte Carlo based.
 //   2-A human player can play against this program.
@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
 
 //
 //  Node.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-24.
 //
@@ -207,7 +207,7 @@ inline std::ostream& operator<<(std::ostream& stream, const Node<NodeType>& node
 
 //
 //  Edge.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-24.
 //
@@ -288,7 +288,7 @@ public:
 
 //
 //  MST.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-25.
 //
@@ -354,7 +354,7 @@ private:
 
 //
 //  Path.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-25.
 //
@@ -433,7 +433,7 @@ public:
 
 //
 //  PriorityQueue.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-25.
 //
@@ -611,7 +611,7 @@ inline void PriorityQueue<NodeType>::print(string nameOfQueue)
 
 //
 //  Graph.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-24.
 //
@@ -700,7 +700,7 @@ public:
     
     // Returns true if node exist in the graph in O(1). Since the graph constrols the ID creation of each node, we can use the size of the vector of node ptrs.
     // Warning, creating an empty graph and not adding nodes in order of IDs starting a 0 will not give correct values from this function.
-    //   Since this was not requested to create graph manually in the assignment, this function should not be used if one does so.
+    //   Since this was not requested to create graph manually in the project requirements, this function should not be used if one does so.
     bool nodeExistInGraphNodeList(int nodeID)
     {
         if (!_graphNodeList.empty())
@@ -1106,7 +1106,7 @@ public:
         return _graphNodeList[nodeID];
     };
     
-    //--------------------   Added getMinimumSpanningTree function for assignment 4.
+    //--------------------   Added getMinimumSpanningTree function for this project.
     //Function that returns the minimum spanning tree for the graph using PRIM's algorithm
     MST<NodeType>* getMinimumSpanningTreePRIM(int startingNodeID)
     {
@@ -1237,7 +1237,7 @@ public:
                     // Remember : At the beginning of the function, the edge matrix of edge ptrs was instantiate with all nullptr
                     if (_createEdgeDependingOn(edgeDensity))
                     {
-                        // Add an undirected edge (as per requested in assignment.) with a random lenght/cost between the edgeLengthMin and edgeLenghtMax.
+                        // Add an undirected edge (as per requested in poject abstract.) with a random lenght/cost between the edgeLengthMin and edgeLenghtMax.
                         addUndirectedEdge(*ptrToRowNode, *ptrToConnectingNode, _randomEdgeLenghtBetween(edgeLenghtMin, edgeLenghtMax));
                         
                     }
@@ -1385,7 +1385,7 @@ protected:
 
 //
 //  HexNode.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-02-01.
 //
@@ -1432,7 +1432,7 @@ inline HexNode::HexNode(int nodeName): Node<HexNode>{nodeName} {
 
 //
 //  HexGameGraph.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-26.
 //
@@ -1462,7 +1462,7 @@ private:
 
 //
 //  HexGameGraph.cpp
-//  Assignment 5 - AI for HexGame
+//  HexGame
 //
 //  Created by Patrick Miron on 2022-02-20.
 //
@@ -1715,7 +1715,7 @@ Path<HexNode>* HexGameGraph::getShortestPath(HexNode * ptrToStartNode, HexNode *
 
 //
 //  HexNodeState.hpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-15.
 //
@@ -1987,7 +1987,7 @@ inline void PrintGameBoard(HexGameGraph* hexGameGraphPtr, int gameSize)
 
 //
 //  HexNodeState.hpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-15.
 //
@@ -2066,7 +2066,7 @@ bool Player::operator==(const Player& other) {
 
 //
 //  HexGame.hpp
-//  Part B - Assignment 4 - Hex Game
+//  Hex Game
 //
 //  Created then Modified by Patrick Miron on 2022-01-25.
 //
@@ -2117,7 +2117,7 @@ private:
 
 //
 //  HexGame.cpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-16.
 //
@@ -2135,8 +2135,8 @@ using namespace std;
 HexGame::HexGame(int gameSize):isActive(true),gameSize(gameSize)
 {
     //Start a game
-    //Implement game using a graph from assignment 3
-    //All graph classes from assignment 3 have been transform to template classes.
+    //Implement game using a graph from project abstract
+    //All graph classes from previous program iteration 3 have been transform to template classes.
     //_gameGraphPtr = new HexGameGraph(gameSize);
 
     _gameGraphPtr = new HexGameGraph(gameSize);
@@ -2540,7 +2540,7 @@ HexGame::~HexGame()
 
 //
 //  AIPlayer.cpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-15.
 //
@@ -2582,7 +2582,7 @@ private:
 
 //
 //  AIPlayer.cpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-16.
 //
@@ -2774,7 +2774,7 @@ AIPlayer::~AIPlayer()
 RESULTS
 ----------------------------------------------------------------------------------------
 
-Welcome to a game of Hex programed by Patrick Miron for the C++ class from professor Ira Pohl, Febuary 2022.
+Welcome to a game of Hex programed by Patrick Miron, Febuary 2022.
 Please enter the size of game you wish to play (Minimum game size => 5):
 20
 

@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  CPP_testing
+//  HexGame
 //
 //  Created then Modified by Patrick Miron on 2022-02-07.
 //

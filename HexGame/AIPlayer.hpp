@@ -1,6 +1,6 @@
 //
 //  AIPlayer.cpp
-//  Assignment 5 - AI for HexGame
+//  AI for HexGame
 //
 //  Created by Patrick Miron on 2022-02-15.
 //
@@ -24,7 +24,7 @@ class AIPlayer
 {
 public:
     int gameSize; // Size of one of the dimensions of the game. Note the game board is always square -> gameSize by gameSize.
-    int aiIterations; // Number of try the AI will full up game board to find winning move. Can thought of AI Strenght(smartness)
+    int aiIterations; // Number of tries the AI will fill up the game board to find winning move. Can thought of AI Strenght(smartness)
     
     AIPlayer(); // Instantiate an null player
     AIPlayer(const int gameSize, const int aiIterations): gameSize(gameSize), aiIterations(aiIterations){}; //Create an AIPlayer
